@@ -1,0 +1,39 @@
+@baseUrl = http://localhost:3000/api
+@id = 351900e2-b443-41cf-945e-51906be7d96e
+
+# Get Users
+GET {{baseUrl}}/users
+
+###
+
+# Post Users
+POST {{baseUrl}}/register
+Content-Type: application/json
+
+{
+  "name": "Mironga",
+  "email": "mironga@email.com",
+  "password": "123456",
+  "cpf": "123.456.789-00"
+}
+
+###
+
+# Login	
+POST {{baseUrl}}/login
+Content-Type: application/json
+
+{
+  "email": "mironga@email.com",
+  "password": "123456"
+}
+
+###
+
+# Logout
+POST {{baseUrl}}/logout
+
+###
+DELETE {{baseUrl}}/users?id={{id}}
+
+###
