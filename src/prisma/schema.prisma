@@ -1,0 +1,98 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique @db.VarChar(255)
+  password     String
+  cpf          String?        @unique
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @default(now())
+  Reservations Reservations[]
+}
+
+model Clients {
+  id           String         @id @default(uuid())
+  name         String
+  cpf          String?
+  email        String?
+  phone        String
+  address      Address?
+  created_at   DateTime       @default(now())
+  updated_at   DateTime       @default(now())
+  Reservations Reservations[]
+}
+
+model Address {
+  id           String   @id @default(uuid())
+  client       Clients  @relation(fields: [client_id], references: [id])
+  client_id    String   @unique
+  city         String
+  neighborhood String
+  state        String
+  number       Int
+  country      String
+  street       String
+  postal_code  String
+  complement   String   @db.VarChar(255)
+  created_at   DateTime @default(now())
+  updated_at   DateTime @default(now())
+}
+
+enum RESERVATION_STATUS {
+  PENDING
+  APPROVED
+  REFUSED
+}
+
+model Reservations {
+  id                  String                @id @default(uuid())
+  clients             Clients               @relation(fields: [client_id], references: [id])
+  client_id           String
+  user_id             String
+  user                User                  @relation(fields: [user_id], references: [id])
+  status              RESERVATION_STATUS
+  reservation_date    DateTime              @default(now())
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @default(now())
+  ReservationProducts ReservationProducts[]
+}
+
+enum ProductType {
+  GALE01
+  TROP02
+  BROW03
+}
+
+model Products {
+  id                  String                @id @default(uuid())
+  name                String
+  quantity            Int
+  price               Float
+  type                ProductType
+  description         String                @db.VarChar(255)
+  created_at          DateTime              @default(now())
+  updated_at          DateTime              @default(now())
+  ReservationProducts ReservationProducts[]
+}
+
+model ReservationProducts {
+  id             String       @id @default(uuid())
+  reservations   Reservations @relation(fields: [reservation_id], references: [id])
+  reservation_id String
+  product        Products     @relation(fields: [product_id], references: [id])
+  product_id     String
+  quantity       Int
+  unit_price     Float
+  total_price    Float
+  created_at     DateTime     @default(now())
+  updated_at     DateTime     @default(now())
+}
