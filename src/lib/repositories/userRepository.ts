@@ -1,4 +1,4 @@
-import { User } from '../../../generated/prisma'
+import { User } from '../../generated/prisma'
 import { prisma } from '../prisma'
 import { UserCreateInput } from '../schemas/userSchema'
 

@@ -3,7 +3,13 @@
   "_version": "22.0.0",
   "compilerOptions": {
     "jsx": "preserve",
-    "lib": ["es2024", "ESNext.Array", "ESNext.Collection", "ESNext.Iterator"],
+    "lib": [
+      "dom",
+      "es2024",
+      "ESNext.Array",
+      "ESNext.Collection",
+      "ESNext.Iterator"
+    ],
     "module": "nodenext",
     "target": "es2022",
     "noEmit": true,
@@ -17,6 +23,9 @@
     "incremental": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "paths": {
+      "@/*": ["./*"]
+    },
     "plugins": [
       {
         "name": "next"
