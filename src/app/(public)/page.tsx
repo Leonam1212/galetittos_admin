@@ -3,9 +3,9 @@
 import { Button } from '@/components/ui/button'
 import React from 'react'
 import { motion } from 'framer-motion'
-import { FormLogin } from '../components/FormLogin'
-import { FormRegister } from '../components/FormRegister'
 import { User, UserPlus } from 'lucide-react'
+import { FormLogin } from '@/src/components/FormLogin'
+import { FormRegister } from '@/src/components/FormRegister'
 
 export default function Login() {
   const [activeButton, setActiveButton] = React.useState('login')
@@ -31,7 +31,7 @@ export default function Login() {
   }
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+    <main className="flex min-h-screen flex-col items-center justify-between p-24 text-black">
       <div className="flex flex-col items-center justify-center rounded-xl bg-[#CDE6F7] p-4 shadow-md">
         <section className="mb-8 flex w-full max-w-2xl items-center justify-center">
           <Button
