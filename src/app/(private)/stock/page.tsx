@@ -127,7 +127,7 @@ export default function InventoryManagement() {
             Estoque do Domingo
           </h1>
           <p className="text-gray-600">
-            Configure quantidades e preços para o dia - Clique para editar
+            Configure quantidades e preços para o dia
           </p>
         </div>
         <div className="flex space-x-2">

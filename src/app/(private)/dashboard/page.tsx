@@ -174,7 +174,7 @@ export default function DashboardOverview() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border bg-white p-6 shadow">
+        <div className="rounded-lg border border-gray-300 bg-white p-6 shadow">
           <div className="mb-2 flex items-center justify-between">
             <h3 className="text-sm font-medium text-gray-600">Pendentes</h3>
             <ShoppingCart className="h-4 w-4 text-orange-600" />
@@ -184,7 +184,7 @@ export default function DashboardOverview() {
           </div>
         </div>
 
-        <div className="rounded-lg border bg-white p-6 shadow">
+        <div className="rounded-lg border border-gray-300 bg-white p-6 shadow">
           <div className="mb-2 flex items-center justify-between">
             <h3 className="text-sm font-medium text-gray-600">Ativos</h3>
             <TrendingUp className="h-4 w-4 text-green-600" />
@@ -192,7 +192,7 @@ export default function DashboardOverview() {
           <div className="text-2xl font-bold text-gray-900">{activeOrders}</div>
         </div>
 
-        <div className="rounded-lg border bg-white p-6 shadow">
+        <div className="rounded-lg border border-gray-300 bg-white p-6 shadow">
           <div className="mb-2 flex items-center justify-between">
             <h3 className="text-sm font-medium text-gray-600">Finalizados</h3>
             <Users className="h-4 w-4 text-blue-600" />
@@ -202,7 +202,7 @@ export default function DashboardOverview() {
           </div>
         </div>
 
-        <div className="rounded-lg border bg-white p-6 shadow">
+        <div className="rounded-lg border border-gray-300 bg-white p-6 shadow">
           <div className="mb-2 flex items-center justify-between">
             <h3 className="text-sm font-medium text-gray-600">Receita Total</h3>
             <Package className="h-4 w-4 text-purple-600" />
@@ -321,7 +321,7 @@ export default function DashboardOverview() {
             filteredOrders.map((order) => (
               <div
                 key={order.id}
-                className="rounded-lg border bg-white p-6 shadow"
+                className="rounded-lg border border-gray-400 bg-white p-6 shadow"
               >
                 <div className="mb-4 flex items-center justify-between">
                   <div className="flex items-center space-x-3">

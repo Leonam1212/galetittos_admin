@@ -28,7 +28,7 @@ const items = [
   },
   {
     title: 'Pedidos',
-    url: '/request',
+    url: '/orders',
     icon: Search,
   },
   {

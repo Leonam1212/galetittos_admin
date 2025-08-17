@@ -6,13 +6,8 @@ export default function Layout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
-      <body
-        style={{ overflow: 'hidden', backgroundColor: 'black', color: 'white' }}
-      >
-        <div>
-          <h1>Public</h1>
-          {children}
-        </div>
+      <body style={{ overflow: 'hidden', color: 'white' }}>
+        <div>{children}</div>
       </body>
     </html>
   )
