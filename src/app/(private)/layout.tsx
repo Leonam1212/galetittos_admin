@@ -6,11 +6,12 @@ export default function Layout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
-      <body className="h-screen w-full bg-[#F9FAFB] font-sans">
-        <SidebarProvider>
+      <body className="">
+        {/* bg-[#F9FAFB] */}
+        <SidebarProvider className="">
           <AppSidebar />
-          <SidebarTrigger />
-          <div className="flex min-h-screen w-full flex-col items-center justify-center gap-4 p-4 px-4 py-4">
+          <SidebarTrigger className="" />
+          <div className="flex w-full flex-col content-center py-4">
             {children}
           </div>
         </SidebarProvider>
