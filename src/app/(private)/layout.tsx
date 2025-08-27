@@ -6,11 +6,11 @@ export default function Layout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="pt-BR">
-      <body className="">
-        {/* bg-[#F9FAFB] */}
-        <SidebarProvider className="">
+      <body className="w-full bg-[#F9FAFB]">
+        {/*  */}
+        <SidebarProvider>
           <AppSidebar />
-          <SidebarTrigger className="" />
+          <SidebarTrigger />
           <div className="flex w-full flex-col content-center py-4">
             {children}
           </div>

@@ -10,10 +10,12 @@ import { cn } from '@/lib/utils'
 function DropdownMenu({
   value,
   onValueChange,
+  className,
   ...props
 }: React.ComponentProps<typeof DropdownMenuPrimitive.Root> & {
   value: string
   onValueChange: (value: string) => void
+  className?: string
 }) {
   return <DropdownMenuPrimitive.Root data-slot="dropdown-menu" {...props} />
 }
