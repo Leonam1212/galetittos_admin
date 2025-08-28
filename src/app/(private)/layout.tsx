@@ -10,7 +10,7 @@ export default function Layout({
         {/*  */}
         <SidebarProvider>
           <AppSidebar />
-          <SidebarTrigger />
+          <SidebarTrigger className="sticky z-50" />
           <div className="flex w-full flex-col content-center py-4">
             {children}
           </div>

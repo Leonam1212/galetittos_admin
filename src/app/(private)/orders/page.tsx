@@ -12,6 +12,9 @@ import {
   Plus,
   X,
   Trash2,
+  User,
+  Phone,
+  MapPin,
 } from 'lucide-react'
 import {
   DropdownMenu,
@@ -21,6 +24,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
+import { get } from 'http'
 
 type OrderStatus = 'pending' | 'preparing' | 'ready' | 'delivered' | 'cancelled'
 
@@ -295,60 +299,120 @@ export default function OrdersManagement() {
         type="text"
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Buscar pedido"
-        className="w-full rounded border border-gray-300 px-4 py-2 text-gray-600 focus:outline-none"
+        className="w-full rounded border border-gray-300 px-4 py-2 text-gray-600 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-200 focus:border-orange-600 focus:shadow-lg focus:shadow-orange-200 focus:outline-none active:border-orange-600"
       />
 
-      <div className="mt-6 space-y-4 rounded-md border border-gray-200 bg-white p-4 shadow-xl">
-        {getOrdersForActiveTab().map((order) => (
-          <div
-            key={order.id}
-            className="grid grid-cols-2 gap-4 rounded-md border border-gray-200 bg-gray-50 p-2 transition-colors hover:bg-gray-100 md:grid-cols-4"
-          >
-            <div className="flex items-center justify-between">
-              <div className="">
-                <p className="font-semibold text-gray-800">{order.customer}</p>
-                <p className="text-sm text-gray-500">{order.phone}</p>
+      <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+        {getOrdersForActiveTab().length > 0 ? (
+          getOrdersForActiveTab().map((order) => (
+            <div
+              key={order.id}
+              className="mb-6 grid grid-cols-1 gap-6 rounded-xl border border-gray-300 bg-gray-50 p-6 transition-all duration-300 hover:shadow-lg lg:grid-cols-4"
+            >
+              <div className="rounded-lg bg-white p-4 shadow-sm">
+                <h2 className="mb-2 text-sm font-semibold tracking-wide text-gray-500 uppercase">
+                  Cliente
+                </h2>
+                <div className="flex items-center">
+                  <User className="mr-2 h-5 w-5 text-gray-600" />
+                  <p className="text-lg font-bold text-gray-800">
+                    {order.customer}
+                  </p>
+                </div>
+                <div className="mt-2 flex items-center">
+                  <Phone className="mr-2 h-5 w-5 text-gray-600" />
+                  <p className="text-sm text-gray-700">{order.phone}</p>
+                </div>
+              </div>
+
+              <div className="rounded-lg bg-white p-4 shadow-sm lg:col-span-2">
+                <h2 className="mb-2 text-sm font-semibold tracking-wide text-gray-500 uppercase">
+                  Detalhes
+                </h2>
+
+                <div>
+                  {' '}
+                  <div className="mb-4">
+                    <h3 className="mb-1 text-base font-semibold text-gray-800">
+                      Pedido
+                    </h3>
+                    <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700">
+                      {order.items.map((item, index) => (
+                        <li key={index}>
+                          {item.quantity}x {item.name}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                  {order.isDelivery && order.address && (
+                    <div>
+                      <h3 className="mb-1 text-base font-semibold text-gray-800">
+                        Endereço
+                      </h3>
+                      <div className="flex items-start">
+                        <MapPin className="mt-[2px] mr-2 h-5 w-5 text-gray-600" />
+                        <p className="text-sm leading-snug text-gray-700">
+                          {order.address}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center justify-center rounded-lg bg-white p-4 shadow-sm">
+                <div className="mb-4 text-center">
+                  <h2 className="text-base font-semibold text-gray-800">
+                    Preço Total
+                  </h2>
+                  <span className="mt-1 text-2xl font-bold text-orange-600">
+                    R$ {order.total.toFixed(2)}
+                  </span>
+                </div>
+
+                <DropdownMenu
+                  value={''}
+                  onValueChange={function (value: string): void {
+                    throw new Error('Function not implemented.')
+                  }}
+                >
+                  <DropdownMenuTrigger className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-gray-100 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200">
+                    {getStatusText(order.status)} {getStatusIcon(order.status)}
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent>
+                    <DropdownMenuLabel>Situação:</DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+
+                    <DropdownMenuItem
+                      onSelect={() => updateOrderStatus(order.id, 'pending')}
+                      value={''}
+                    >
+                      Pendente
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                      onSelect={() => updateOrderStatus(order.id, 'delivered')}
+                      value={''}
+                    >
+                      Entregue
+                    </DropdownMenuItem>
+
+                    <DropdownMenuItem
+                      onSelect={() => updateOrderStatus(order.id, 'cancelled')}
+                      value={''}
+                    >
+                      Cancelado
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
             </div>
-            <div className="text-sm text-gray-600">
-              <h1 className="text-lg font-semibold text-gray-800">Pedido</h1>
-              {order.items.map((item, index) => (
-                <p key={index}>
-                  {item.quantity}x {item.name}
-                </p>
-              ))}
-            </div>
-            <div className="text-lg text-gray-600">
-              <span>
-                <h1 className="text-lg font-semibold text-gray-800">
-                  Preço total:
-                </h1>
-              </span>
-              R$ {order.total.toFixed(2)}
-            </div>
-
-            <DropdownMenu
-              value={'dropdownMenu'}
-              className=""
-              onValueChange={function (value: string): void {
-                throw new Error('Function not implemented.')
-              }}
-            >
-              <DropdownMenuTrigger>Status</DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>Situação:</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem value={'pending'}>Pendente</DropdownMenuItem>
-                <DropdownMenuItem value={'delivered'}>
-                  Entregado
-                </DropdownMenuItem>
-                <DropdownMenuItem value={'cancelled'}>
-                  Cancelado
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p className="py-10 text-center text-gray-600">
+            Nenhum pedido encontrado.
+          </p>
+        )}
       </div>
     </div>
   )
