@@ -1,7 +1,8 @@
 'use client'
-
+import { motion } from 'framer-motion'
 import { useState } from 'react'
 import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
 import {
   Clock,
   CheckCircle,
@@ -25,6 +26,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { get } from 'http'
+import { is } from 'zod/v4/locales'
 
 type OrderStatus = 'pending' | 'preparing' | 'ready' | 'delivered' | 'cancelled'
 
@@ -130,6 +132,11 @@ export default function OrdersManagement() {
     'all'
   )
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false)
+  const [chickenQuantityModal, setChickenQuantityModal] = useState(false)
+  const [selectedProducts, setSelectedProducts] = useState<
+    { name: string; price: number }[]
+  >([])
+  const [isDelivery, setIsDelivery] = useState(false)
 
   const getStatusIcon = (status: OrderStatus) => {
     switch (status) {
@@ -236,13 +243,27 @@ export default function OrdersManagement() {
             Gerencie todos os pedidos da sua galeteria
           </p>
         </div>
-        <button
-          onClick={() => setIsNewOrderOpen(true)}
-          className="flex cursor-pointer items-center space-x-2 rounded-md bg-orange-600 px-4 py-2 text-white hover:bg-orange-700"
-        >
-          <Plus className="h-4 w-4" />
-          <span className="">Novo Pedido</span>
-        </button>
+        <div className="flex space-x-4">
+          <button
+            onClick={() =>
+              setChickenQuantityModal(() =>
+                chickenQuantityModal ? false : true
+              )
+            }
+            className="flex cursor-pointer items-center space-x-2 rounded-md bg-orange-600 px-4 py-2 text-white hover:bg-orange-700"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="">Quantidade de frango</span>
+          </button>
+
+          <button
+            onClick={() => setIsNewOrderOpen(true)}
+            className="flex cursor-pointer items-center space-x-2 rounded-md bg-orange-600 px-4 py-2 text-white hover:bg-orange-700"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="">Novo Pedido</span>
+          </button>
+        </div>
       </div>
 
       <div className="grid w-full gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -376,33 +397,29 @@ export default function OrdersManagement() {
                     throw new Error('Function not implemented.')
                   }}
                 >
-                  <DropdownMenuTrigger className="flex w-full items-center justify-center gap-2 rounded-md border border-gray-300 bg-gray-100 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200">
+                  <DropdownMenuTrigger className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border border-gray-300 bg-gray-100 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200">
                     {getStatusText(order.status)} {getStatusIcon(order.status)}
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
                     <DropdownMenuLabel>Situação:</DropdownMenuLabel>
                     <DropdownMenuSeparator />
-
-                    <DropdownMenuItem
-                      onSelect={() => updateOrderStatus(order.id, 'pending')}
-                      value={''}
-                    >
-                      Pendente
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem
-                      onSelect={() => updateOrderStatus(order.id, 'delivered')}
-                      value={''}
-                    >
-                      Entregue
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem
-                      onSelect={() => updateOrderStatus(order.id, 'cancelled')}
-                      value={''}
-                    >
-                      Cancelado
-                    </DropdownMenuItem>
+                    {(
+                      [
+                        'pending',
+                        'ready',
+                        'delivered',
+                        'cancelled',
+                      ] as OrderStatus[]
+                    ).map((status) => (
+                      <DropdownMenuItem
+                        key={status}
+                        onSelect={() => updateOrderStatus(order.id, status)}
+                        value={status}
+                        className="cursor-pointer capitalize"
+                      >
+                        {getStatusText(status)} {getStatusIcon(status)}
+                      </DropdownMenuItem>
+                    ))}
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -414,6 +431,211 @@ export default function OrdersManagement() {
           </p>
         )}
       </div>
+
+      {chickenQuantityModal && (
+        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div
+            className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900">
+                Quantidade de Frangos
+              </h2>
+              <button
+                onClick={() => setChickenQuantityModal(false)}
+                className="cursor-pointer text-gray-600 hover:text-gray-900"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <p className="text-gray-600">
+              Quantidade de frangos no pedido: {chickenQuantityModal}
+            </p>
+            <div className="mt-6 flex justify-end">
+              <button
+                onClick={() => setChickenQuantityModal(false)}
+                className="cursor-pointer rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300"
+              >
+                Fechar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {isNewOrderOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+        >
+          <div
+            className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-lg"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-gray-900">Novo Pedido</h2>
+              <button
+                onClick={() => setIsNewOrderOpen(false)}
+                className="cursor-pointer text-gray-600 hover:text-gray-900"
+              >
+                <X className="h-6 w-6" />
+              </button>
+            </div>
+
+            <form
+              className="flex flex-col gap-4"
+              onSubmit={(e) => {
+                e.preventDefault()
+                const formData = new FormData(e.currentTarget)
+                const customer = formData.get('customer') as string
+                const phone = formData.get('phone') as string
+                const address = formData.get('address') as string | undefined
+
+                if (selectedProducts.length === 0) {
+                  alert('Selecione ao menos um produto para o pedido')
+                  return
+                }
+                const orderData = {
+                  customer,
+                  phone,
+                  items: selectedProducts.map((p) => {
+                    return {
+                      name: p.name,
+                      quantity: 1,
+                      price: p.price,
+                    }
+                  }),
+                  isDelivery,
+                  address: isDelivery ? address : undefined,
+                }
+
+                createNewOrder(orderData)
+
+                e.currentTarget.reset()
+                setSelectedProducts([])
+                setIsDelivery(false)
+              }}
+            >
+              <input
+                name="customer"
+                placeholder="Nome do cliente"
+                className="rounded border p-2"
+                required
+              />
+              <input
+                name="phone"
+                placeholder="Telefone"
+                className="rounded border p-2"
+                required
+              />
+
+              <DropdownMenu
+                value={''}
+                onValueChange={function (value: string): void {
+                  throw new Error('Function not implemented.')
+                }}
+              >
+                <DropdownMenuTrigger className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border border-gray-300 bg-gray-100 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200">
+                  O que o cliente quer? <Filter className="h-4 w-4" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>Produtos:</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  {availableProducts.map((product, index) => (
+                    <DropdownMenuItem
+                      className="cursor-pointer capitalize"
+                      value=""
+                      key={index}
+                      onSelect={() => {
+                        if (
+                          !selectedProducts.find((p) => p.name === product.name)
+                        ) {
+                          setSelectedProducts([...selectedProducts, product])
+                        }
+                      }}
+                    >
+                      {product.name} - R$ {product.price.toFixed(2)}
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+
+              <div className="flex flex-col gap-2">
+                {selectedProducts.map((product, index) => (
+                  <div
+                    key={index}
+                    className="flex items-center justify-between border-b p-2"
+                  >
+                    <span>{product.name}</span>
+                    <span>R$ {product.price.toFixed(2)}</span>
+                    <button
+                      type="button"
+                      className="ml-2 cursor-pointer text-red-600 hover:text-red-800"
+                      onClick={() =>
+                        setSelectedProducts((prev) =>
+                          prev.filter((p) => p.name !== product.name)
+                        )
+                      }
+                    >
+                      Remover
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  className="cursor-pointer"
+                  name="isDelivery"
+                  checked={isDelivery}
+                  id="isDelivery"
+                  onCheckedChange={(checked) => setIsDelivery(!!checked)}
+                >
+                  Entrega
+                </Checkbox>
+                <label htmlFor="isDelivery" className="text-gray-700">
+                  Serviço para o motoboy?
+                </label>
+              </div>
+
+              {isDelivery && (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <input
+                    name="address"
+                    placeholder="Endereço"
+                    className="rounded border p-2 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-200 focus:border-orange-600 focus:shadow-lg focus:shadow-orange-200 focus:outline-none active:border-orange-600"
+                    required
+                  />
+                </motion.div>
+              )}
+
+              <div className="flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => setIsNewOrderOpen(false)}
+                  className="cursor-pointer rounded bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="cursor-pointer rounded bg-orange-600 px-4 py-2 text-white hover:bg-orange-700"
+                >
+                  Criar Pedido
+                </button>
+              </div>
+            </form>
+          </div>
+        </motion.div>
+      )}
     </div>
   )
 }
