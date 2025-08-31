@@ -30,6 +30,11 @@ import { is } from 'zod/v4/locales'
 
 type OrderStatus = 'pending' | 'preparing' | 'ready' | 'delivered' | 'cancelled'
 
+interface SelectedProduct {
+  name: string
+  price: number
+  quantity: number
+}
 interface Order {
   id: string
   customer: string
@@ -40,7 +45,12 @@ interface Order {
   createdAt: string
   estimatedTime?: string
   isDelivery: boolean
-  address?: string
+  address?: {
+    street: string
+    number: string
+    zip: string
+    neighborhood: string
+  }
 }
 
 const mockOrders: Order[] = [
@@ -57,7 +67,12 @@ const mockOrders: Order[] = [
     createdAt: '2024-01-15T10:30:00',
     estimatedTime: '25 min',
     isDelivery: true,
-    address: 'Rua das Flores, 123',
+    address: {
+      street: 'Rua das Flores',
+      number: '123',
+      neighborhood: 'Centro',
+      zip: '12345-678',
+    },
   },
   {
     id: '#002',
@@ -84,7 +99,12 @@ const mockOrders: Order[] = [
     status: 'delivered',
     createdAt: '2024-01-15T09:45:00',
     isDelivery: true,
-    address: 'Av. Principal, 456',
+    address: {
+      street: 'Avenida Central',
+      number: '456',
+      zip: '23456-789',
+      neighborhood: 'Centro',
+    },
   },
   {
     id: '#004',
@@ -133,10 +153,18 @@ export default function OrdersManagement() {
   )
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false)
   const [chickenQuantityModal, setChickenQuantityModal] = useState(false)
+  const [chickenQuantity, setChickenQuantity] = useState<number>(0)
+
   const [selectedProducts, setSelectedProducts] = useState<
-    { name: string; price: number }[]
+    { name: string; price: number; quantity: number }[]
   >([])
   const [isDelivery, setIsDelivery] = useState(false)
+
+  const handleQuantityChange = (index: number, quantity: number) => {
+    const newSelectedProducts = [...selectedProducts]
+    newSelectedProducts[index].quantity = quantity
+    setSelectedProducts(newSelectedProducts)
+  }
 
   const getStatusIcon = (status: OrderStatus) => {
     switch (status) {
@@ -179,7 +207,12 @@ export default function OrdersManagement() {
     phone: string
     items: { name: string; quantity: number; price: number }[]
     isDelivery: boolean
-    address?: string
+    address?: {
+      street: string
+      number: string
+      neighborhood: string
+      zip: string
+    }
   }) => {
     const newOrder: Order = {
       id: `#${String(orders.length + 1).padStart(3, '0')}`,
@@ -266,7 +299,19 @@ export default function OrdersManagement() {
         </div>
       </div>
 
-      <div className="grid w-full gap-4 md:grid-cols-2 lg:grid-cols-4">
+      <div className="grid w-full gap-4 md:grid-cols-2 lg:grid-cols-5">
+        <div className="group rounded-sm border-t border-r-1 border-l-1 border-gray-300 border-r-orange-600/30 border-l-orange-600/30 bg-white p-4 shadow-lg shadow-orange-200 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl">
+          <div className="mb-2 flex items-center justify-between">
+            <h3 className="text-sm font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:scale-105 group-hover:text-orange-900">
+              Total de Frangos
+            </h3>
+            <Eye className="h-4 w-4 text-blue-600" />
+          </div>
+          <div className="text-2xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600">
+            {chickenQuantity}
+          </div>
+        </div>
+
         <div className="group rounded-sm border-t border-r-1 border-l-1 border-gray-300 border-r-orange-600/30 border-l-orange-600/30 bg-white p-4 shadow-lg shadow-orange-200 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl">
           <div className="mb-2 flex items-center justify-between">
             <h3 className="text-sm font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:scale-105 group-hover:text-orange-900">
@@ -373,7 +418,7 @@ export default function OrdersManagement() {
                       <div className="flex items-start">
                         <MapPin className="mt-[2px] mr-2 h-5 w-5 text-gray-600" />
                         <p className="text-sm leading-snug text-gray-700">
-                          {order.address}
+                          {order.address.street}, {order.address.number} -{' '}
                         </p>
                       </div>
                     </div>
@@ -440,7 +485,7 @@ export default function OrdersManagement() {
           >
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-xl font-bold text-gray-900">
-                Quantidade de Frangos
+                Definir Quantidade de Frangos do Dia
               </h2>
               <button
                 onClick={() => setChickenQuantityModal(false)}
@@ -450,15 +495,35 @@ export default function OrdersManagement() {
               </button>
             </div>
 
-            <p className="text-gray-600">
-              Quantidade de frangos no pedido: {chickenQuantityModal}
-            </p>
-            <div className="mt-6 flex justify-end">
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">
+                Quantidade disponível:
+              </label>
+              <input
+                type="number"
+                min={0}
+                value={chickenQuantity}
+                onChange={(e) =>
+                  setChickenQuantity(Math.max(0, parseInt(e.target.value) || 0))
+                }
+                className="no-spinner w-full rounded border border-gray-300 p-2 text-center text-lg font-bold outline-none focus:border-orange-600 focus:ring-2 focus:ring-orange-600"
+              />
+            </div>
+
+            <div className="mt-6 flex justify-end gap-3">
               <button
                 onClick={() => setChickenQuantityModal(false)}
                 className="cursor-pointer rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300"
               >
-                Fechar
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  setChickenQuantityModal(false)
+                }}
+                className="cursor-pointer rounded-md bg-orange-600 px-4 py-2 text-white hover:bg-orange-700"
+              >
+                Confirmar
               </button>
             </div>
           </div>
@@ -513,7 +578,20 @@ export default function OrdersManagement() {
                   address: isDelivery ? address : undefined,
                 }
 
-                createNewOrder(orderData)
+                createNewOrder(
+                  orderData as {
+                    customer: string
+                    phone: string
+                    items: { name: string; quantity: number; price: number }[]
+                    isDelivery: boolean
+                    address?: {
+                      street: string
+                      number: string
+                      neighborhood: string
+                      zip: string
+                    }
+                  }
+                )
 
                 e.currentTarget.reset()
                 setSelectedProducts([])
@@ -547,30 +625,52 @@ export default function OrdersManagement() {
                   <DropdownMenuSeparator />
                   {availableProducts.map((product, index) => (
                     <DropdownMenuItem
-                      className="cursor-pointer capitalize"
+                      className="flex cursor-pointer items-center justify-between capitalize"
                       value=""
                       key={index}
                       onSelect={() => {
                         if (
                           !selectedProducts.find((p) => p.name === product.name)
                         ) {
-                          setSelectedProducts([...selectedProducts, product])
+                          setSelectedProducts([
+                            ...selectedProducts,
+                            { ...product, quantity: 1 },
+                          ])
                         }
                       }}
                     >
-                      {product.name} - R$ {product.price.toFixed(2)}
+                      <span>{product.name}</span>
+                      <span>R$ {product.price.toFixed(2)}</span>
                     </DropdownMenuItem>
                   ))}
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <div className="flex flex-col gap-2">
+              <div className="items-between flex max-h-40 flex-col justify-center gap-2 overflow-y-auto p-2">
                 {selectedProducts.map((product, index) => (
                   <div
                     key={index}
                     className="flex items-center justify-between border-b p-2"
                   >
                     <span>{product.name}</span>
+                    <div>
+                      <label className="mr-2" htmlFor="quantity">
+                        Quatidade:
+                      </label>
+                      <input
+                        className="no-spinner w-16 rounded bg-gray-100 p-1 text-center font-bold outline-none"
+                        type="number"
+                        name="quantity"
+                        id="quantity"
+                        value={product.quantity}
+                        onChange={(e) =>
+                          handleQuantityChange(
+                            index,
+                            Math.max(0, parseInt(e.target.value))
+                          )
+                        }
+                      />
+                    </div>
                     <span>R$ {product.price.toFixed(2)}</span>
                     <button
                       type="button"
@@ -587,9 +687,23 @@ export default function OrdersManagement() {
                 ))}
               </div>
 
+              <div className="text-right font-bold">
+                Preço Total: R${' '}
+                {selectedProducts && selectedProducts.length === 0
+                  ? '0.00'
+                  : selectedProducts
+                      .reduce(
+                        (sum, item) =>
+                          sum +
+                          (item.quantity > 0 ? item.price * item.quantity : 0),
+                        0
+                      )
+                      .toFixed(2)}
+              </div>
+
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  className="cursor-pointer"
+                  className="dark:focus:ring-offset-opacity-50 cursor-pointer border-black text-gray-700 hover:text-gray-900 focus:ring-2 focus:ring-orange-600 focus:ring-offset-2 focus:ring-offset-white dark:text-gray-400 dark:checked:bg-orange-600 dark:checked:text-white dark:hover:text-white dark:focus:ring-orange-600 dark:focus:ring-offset-gray-800"
                   name="isDelivery"
                   checked={isDelivery}
                   id="isDelivery"
@@ -597,7 +711,10 @@ export default function OrdersManagement() {
                 >
                   Entrega
                 </Checkbox>
-                <label htmlFor="isDelivery" className="text-gray-700">
+                <label
+                  htmlFor="isDelivery"
+                  className="cursor-pointer text-gray-700"
+                >
                   Serviço para o motoboy?
                 </label>
               </div>
@@ -607,13 +724,30 @@ export default function OrdersManagement() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
+                  className="w-full"
                 >
-                  <input
-                    name="address"
-                    placeholder="Endereço"
-                    className="rounded border p-2 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-200 focus:border-orange-600 focus:shadow-lg focus:shadow-orange-200 focus:outline-none active:border-orange-600"
-                    required
-                  />
+                  <div className="flex flex-col gap-2 md:flex-row md:gap-4">
+                    <input
+                      name="address"
+                      placeholder="Bairro"
+                      className="w-full rounded border p-2 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-200 focus:border-orange-600 focus:shadow-lg focus:shadow-orange-200 focus:outline-none active:border-orange-600"
+                      required
+                    />
+
+                    <input
+                      name="address"
+                      placeholder="Rua"
+                      className="w-full rounded border p-2 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-200 focus:border-orange-600 focus:shadow-lg focus:shadow-orange-200 focus:outline-none active:border-orange-600"
+                      required
+                    />
+
+                    <input
+                      name="address"
+                      placeholder="Número"
+                      className="w-full rounded border p-2 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-200 focus:border-orange-600 focus:shadow-lg focus:shadow-orange-200 focus:outline-none active:border-orange-600"
+                      required
+                    />
+                  </div>
                 </motion.div>
               )}
 

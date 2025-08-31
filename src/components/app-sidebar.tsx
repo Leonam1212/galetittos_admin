@@ -31,11 +31,11 @@ const items = [
     url: '/orders',
     icon: Search,
   },
-  {
-    title: 'Clientes',
-    url: '/clients',
-    icon: ChartNoAxesGantt,
-  },
+  // {
+  //   title: 'Clientes',
+  //   url: '/clients',
+  //   icon: ChartNoAxesGantt,
+  // },
   // {
   //   title: 'Estoque',
   //   url: '/stock',
