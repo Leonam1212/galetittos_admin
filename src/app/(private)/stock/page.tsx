@@ -11,7 +11,7 @@ interface InventoryItem {
   quantityForDay: number
   priceForDay: number
   isCombo?: boolean
-  comboItems?: string[] // IDs dos itens que compõem o combo
+  comboItems?: string[]
 }
 
 const mockInventory: InventoryItem[] = [
@@ -120,7 +120,7 @@ export default function InventoryManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 p-4 md:p-6 lg:p-8">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold text-gray-900">
@@ -149,52 +149,57 @@ export default function InventoryManagement() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-3">
-        <div className="rounded-lg border bg-white p-6 shadow">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-600">
-              Total de Produtos
+        <div className="group rounded-sm border border-gray-300 bg-white p-3 shadow transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md md:p-4">
+          <div className="mb-1 flex items-center justify-between md:mb-2">
+            <h3 className="text-xs font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:text-orange-900 md:text-sm">
+              Total de Produtos{' '}
             </h3>
             <Package className="h-4 w-4 text-blue-600" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">{totalItems}</div>
-          <p className="text-xs text-gray-500">Produtos para o domingo</p>
+          <div className="text-xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600 md:text-2xl">
+            <div className="text-2xl font-bold text-gray-900">{totalItems}</div>
+            <p className="text-xs text-gray-500">Produtos para o domingo</p>
+          </div>
         </div>
 
-        <div className="rounded-lg border bg-white p-6 shadow">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-600">
+        <div className="group rounded-sm border border-gray-300 bg-white p-3 shadow transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md md:p-4">
+          <div className="mb-1 flex items-center justify-between md:mb-2">
+            <h3 className="text-xs font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:text-orange-900 md:text-sm">
               Quantidade Total
             </h3>
-            <Package className="h-4 w-4 text-green-600" />
+            <Package className="h-4 w-4 text-blue-600" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">
-            {totalQuantity}
+          <div className="text-xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600 md:text-2xl">
+            <div className="text-2xl font-bold text-gray-900">
+              {totalQuantity}
+            </div>
+            <p className="text-xs text-gray-500">Unidades preparadas</p>
           </div>
-          <p className="text-xs text-gray-500">Unidades preparadas</p>
         </div>
 
-        <div className="rounded-lg border bg-white p-6 shadow">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-600">
+        <div className="group rounded-sm border border-gray-300 bg-white p-3 shadow transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md md:p-4">
+          <div className="mb-1 flex items-center justify-between md:mb-2">
+            <h3 className="text-xs font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:text-orange-900 md:text-sm">
               Valor Total Estimado
             </h3>
-            <Package className="h-4 w-4 text-purple-600" />
+            <Package className="h-4 w-4 text-blue-600" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">
-            R$ {totalValue.toFixed(2)}
+          <div className="text-xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600 md:text-2xl">
+            <div className="text-2xl font-bold text-gray-900">
+              R$ {totalValue.toFixed(2)}
+            </div>
+            <p className="text-xs text-gray-500">Se vender tudo</p>
           </div>
-          <p className="text-xs text-gray-500">Se vender tudo</p>
         </div>
       </div>
 
       <div className="relative">
-        <Search className="absolute top-3 left-3 h-4 w-4 text-gray-400" />
         <input
           type="text"
           placeholder="Buscar produtos..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full rounded-md border border-gray-300 py-2 pr-3 pl-10 focus:border-orange-500 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+          className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-600 transition-all duration-300 ease-in-out hover:shadow-md hover:shadow-orange-200 focus:border-orange-600 focus:shadow-md focus:shadow-orange-200 focus:outline-none active:border-orange-600 md:px-4 md:text-base"
         />
       </div>
 

@@ -274,7 +274,18 @@ export default function OrdersManagement() {
             Gerencie todos os pedidos da sua galeteria
           </p>
         </div>
-        <div className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-2">
+        <div className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-3">
+          <button
+            onClick={() => setChickenQuantityModal(!chickenQuantityModal)}
+            className="flex cursor-pointer items-center justify-center space-x-2 rounded-md bg-orange-600 px-2 py-2 text-white hover:bg-orange-700 sm:px-2"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="white-space-nowrap text-xs font-semibold sm:text-sm">
+              Pedido Cliente Existente
+              {/* deixar pra fazer dps o pull dos clientes já cadastrados pra ca */}
+            </span>
+          </button>
+
           <button
             onClick={() => setChickenQuantityModal(!chickenQuantityModal)}
             className="flex cursor-pointer items-center justify-center space-x-2 rounded-md bg-orange-600 px-3 py-2 text-white hover:bg-orange-700 sm:px-4"
