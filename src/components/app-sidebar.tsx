@@ -31,16 +31,16 @@ const items = [
     url: '/orders',
     icon: Search,
   },
-  // {
-  //   title: 'Clientes',
-  //   url: '/clients',
-  //   icon: ChartNoAxesGantt,
-  // },
-  // {
-  //   title: 'Estoque',
-  //   url: '/stock',
-  //   icon: Layers,
-  // },
+  {
+    title: 'Clientes',
+    url: '/clients',
+    icon: ChartNoAxesGantt,
+  },
+  {
+    title: 'Estoque',
+    url: '/stock',
+    icon: Layers,
+  },
   // {
   //   title: 'Relatório',
   //   url: '/report',

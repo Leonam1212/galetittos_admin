@@ -1,617 +1,554 @@
 'use client'
-
+import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { Button } from '@/components/ui/button'
-import { Input } from '@/components/ui/input'
 import {
-  Search,
-  Filter,
-  Eye,
-  Edit,
-  Plus,
+  User,
   Phone,
-  Mail,
   MapPin,
-  Star,
-  Users,
+  Plus,
   X,
+  Trash2,
+  Search,
+  Users,
+  Calendar,
+  AlertCircle,
+  Edit,
 } from 'lucide-react'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu'
 
-interface Customer {
+interface Client {
   id: string
   name: string
-  email: string
   phone: string
-  address: string
-  registeredAt: string
-  totalOrders: number
-  totalSpent: number
-  lastOrderDate: string
-  status: 'active' | 'inactive' | 'vip'
-  notes?: string
+  address?: {
+    street: string
+    number: string
+    neighborhood: string
+  }
+  createdAt: string
 }
 
-const mockCustomers: Customer[] = [
+const mockClients: Client[] = [
   {
-    id: 'C001',
+    id: '#001',
     name: 'João Silva',
-    email: 'joao.silva@email.com',
     phone: '(11) 99999-1234',
-    address: 'Rua das Flores, 123 - Centro',
-    registeredAt: '2023-06-15T10:00:00',
-    totalOrders: 15,
-    totalSpent: 687.5,
-    lastOrderDate: '2024-01-15T10:30:00',
-    status: 'vip',
-    notes: 'Cliente preferencial, sempre pede galeto inteiro',
+    address: {
+      street: 'Rua das Flores',
+      number: '123',
+      neighborhood: 'Centro',
+    },
+    createdAt: '2024-01-15T10:30:00',
   },
   {
-    id: 'C002',
+    id: '#002',
     name: 'Maria Santos',
-    email: 'maria.santos@email.com',
     phone: '(11) 98888-5678',
-    address: 'Av. Principal, 456 - Jardim',
-    registeredAt: '2023-08-22T14:30:00',
-    totalOrders: 8,
-    totalSpent: 324.8,
-    lastOrderDate: '2024-01-15T10:15:00',
-    status: 'active',
+    createdAt: '2024-01-14T15:45:00',
   },
   {
-    id: 'C003',
+    id: '#003',
     name: 'Pedro Costa',
-    email: 'pedro.costa@email.com',
     phone: '(11) 97777-9012',
-    address: 'Rua do Comércio, 789 - Vila Nova',
-    registeredAt: '2023-03-10T09:15:00',
-    totalOrders: 22,
-    totalSpent: 1245.6,
-    lastOrderDate: '2024-01-15T09:45:00',
-    status: 'vip',
-    notes: 'Empresário local, faz pedidos grandes para eventos',
+    address: {
+      street: 'Avenida Central',
+      number: '456',
+      neighborhood: 'Jardins',
+    },
+    createdAt: '2024-01-13T09:20:00',
   },
   {
-    id: 'C004',
+    id: '#004',
     name: 'Ana Oliveira',
-    email: 'ana.oliveira@email.com',
     phone: '(11) 96666-3456',
-    address: 'Rua das Palmeiras, 321 - Bairro Alto',
-    registeredAt: '2023-11-05T16:45:00',
-    totalOrders: 3,
-    totalSpent: 127.4,
-    lastOrderDate: '2024-01-15T11:00:00',
-    status: 'active',
+    createdAt: '2024-01-12T14:10:00',
   },
   {
-    id: 'C005',
+    id: '#005',
     name: 'Carlos Mendes',
-    email: 'carlos.mendes@email.com',
     phone: '(11) 95555-7890',
-    address: 'Av. dos Trabalhadores, 654 - Industrial',
-    registeredAt: '2023-01-20T11:20:00',
-    totalOrders: 1,
-    totalSpent: 45.9,
-    lastOrderDate: '2023-12-10T15:30:00',
-    status: 'inactive',
-    notes: 'Não faz pedidos há mais de 30 dias',
+    address: {
+      street: 'Rua das Palmeiras',
+      number: '789',
+      neighborhood: 'Vila Nova',
+    },
+    createdAt: '2024-01-11T16:30:00',
   },
 ]
 
-export default function CustomersManagement() {
-  const [customers, setCustomers] = useState<Customer[]>(mockCustomers)
+export default function ClientsManagement() {
+  const [clients, setClients] = useState<Client[]>(mockClients)
   const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [activeTab, setActiveTab] = useState('all')
-  const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(
-    null
-  )
-  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false)
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false)
+  const [isNewClientOpen, setIsNewClientOpen] = useState(false)
+  const [clientToDelete, setClientToDelete] = useState<Client | null>(null)
+  const [isEditing, setIsEditing] = useState(false)
+  const [editingClient, setEditingClient] = useState<Client | null>(null)
 
-  const getStatusBadge = (status: Customer['status']) => {
-    switch (status) {
-      case 'vip':
-        return 'px-2 py-1 text-xs font-medium rounded-full bg-yellow-100 text-yellow-800'
-      case 'active':
-        return 'px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800'
-      case 'inactive':
-        return 'px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800'
-      default:
-        return 'px-2 py-1 text-xs font-medium rounded-full bg-gray-100 text-gray-800'
-    }
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString)
+    return date.toLocaleDateString('pt-BR', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric',
+    })
   }
 
-  const getStatusText = (status: Customer['status']) => {
-    switch (status) {
-      case 'vip':
-        return 'VIP'
-      case 'active':
-        return 'Ativo'
-      case 'inactive':
-        return 'Inativo'
+  const createNewClient = (clientData: {
+    name: string
+    phone: string
+    address?: {
+      street: string
+      number: string
+      neighborhood: string
+      zip: string
     }
+  }) => {
+    const newClient: Client = {
+      id: `#${String(clients.length + 1).padStart(3, '0')}`,
+      name: clientData.name,
+      phone: clientData.phone,
+      address: clientData.address,
+      createdAt: new Date().toISOString(),
+    }
+    setClients([newClient, ...clients])
+    setIsNewClientOpen(false)
   }
 
-  const filteredCustomers = customers.filter((customer) => {
-    const matchesSearch =
-      customer.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      customer.phone.includes(searchTerm)
-    const matchesStatus =
-      statusFilter === 'all' || customer.status === statusFilter
-    const matchesTab = activeTab === 'all' || customer.status === activeTab
-    return matchesSearch && matchesStatus && matchesTab
+  const updateClient = (clientData: {
+    id: string
+    name: string
+    phone: string
+    address?: {
+      street: string
+      number: string
+      neighborhood: string
+    }
+  }) => {
+    setClients(
+      clients.map((client) =>
+        client.id === clientData.id ? { ...client, ...clientData } : client
+      )
+    )
+    setIsEditing(false)
+    setEditingClient(null)
+  }
+
+  const deleteClient = (clientId: string) => {
+    setClients(clients.filter((client) => client.id !== clientId))
+    setClientToDelete(null)
+  }
+
+  const filteredClients = clients.filter((client) => {
+    return (
+      client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.phone.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      client.id.toLowerCase().includes(searchTerm.toLowerCase())
+    )
   })
 
-  const getCustomersByStatus = (status: Customer['status']) =>
-    customers.filter((customer) => customer.status === status)
-
-  const totalCustomers = customers.length
-  const activeCustomers = getCustomersByStatus('active').length
-  const vipCustomers = getCustomersByStatus('vip').length
-  const inactiveCustomers = getCustomersByStatus('inactive').length
-
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 p-4 md:p-6 lg:p-8">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Gestão de Clientes
+          <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
+            <span className="relative text-orange-500">
+              GESTÃO{' '}
+              <div className="absolute bottom-0 left-0 h-[1px] w-full bg-orange-600"></div>
+            </span>
+            DE CLIENTES
           </h1>
-          <p className="text-gray-600">
+          <p className="text-sm text-gray-600 md:text-base">
             Gerencie todos os clientes da sua galeteria
           </p>
         </div>
-        <Button onClick={() => setIsAddDialogOpen(true)}>
-          <Plus className="mr-2 h-4 w-4" />
-          Novo Cliente
-        </Button>
+        <div className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-1">
+          <button
+            onClick={() => setIsNewClientOpen(true)}
+            className="flex cursor-pointer items-center justify-center space-x-2 rounded-md bg-orange-600 px-3 py-2 text-white hover:bg-orange-700 sm:px-4"
+          >
+            <Plus className="h-4 w-4" />
+            <span className="text-xs font-semibold sm:text-sm">
+              Novo Cliente
+            </span>
+          </button>
+        </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <div className="rounded-lg border bg-white p-6 shadow">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-600">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 lg:grid-cols-4">
+        <div className="group rounded-sm border border-gray-300 bg-white p-3 shadow transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md md:p-4">
+          <div className="mb-1 flex items-center justify-between md:mb-2">
+            <h3 className="text-xs font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:text-orange-900 md:text-sm">
               Total de Clientes
             </h3>
-            <Users className="h-4 w-4 text-blue-600" />
+            <Users className="h-3 w-3 text-blue-600 md:h-4 md:w-4" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">
-            {totalCustomers}
+          <div className="text-xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600 md:text-2xl">
+            {clients.length}
           </div>
-          <p className="text-xs text-gray-500">+2 novos esta semana</p>
         </div>
 
-        <div className="rounded-lg border bg-white p-6 shadow">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-600">
-              Clientes Ativos
+        <div className="group rounded-sm border border-gray-300 bg-white p-3 shadow transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md md:p-4">
+          <div className="mb-1 flex items-center justify-between md:mb-2">
+            <h3 className="text-xs font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:text-orange-900 md:text-sm">
+              Clientes com Endereço
             </h3>
-            <Users className="h-4 w-4 text-green-600" />
+            <MapPin className="h-3 w-3 text-blue-600 md:h-4 md:w-4" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">
-            {activeCustomers}
+          <div className="text-xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600 md:text-2xl">
+            {clients.filter((client) => client.address).length}
           </div>
-          <p className="text-xs text-gray-500">Fizeram pedidos recentemente</p>
         </div>
 
-        <div className="rounded-lg border bg-white p-6 shadow">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-600">Clientes VIP</h3>
-            <Star className="h-4 w-4 text-yellow-600" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900">{vipCustomers}</div>
-          <p className="text-xs text-gray-500">Clientes preferenciais</p>
-        </div>
-
-        <div className="rounded-lg border bg-white p-6 shadow">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-600">
-              Clientes Inativos
+        <div className="group rounded-sm border border-gray-300 bg-white p-3 shadow transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md md:p-4">
+          <div className="mb-1 flex items-center justify-between md:mb-2">
+            <h3 className="text-xs font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:text-orange-900 md:text-sm">
+              Novos (7 dias)
             </h3>
-            <Users className="h-4 w-4 text-red-600" />
+            <Calendar className="h-3 w-3 text-blue-600 md:h-4 md:w-4" />
           </div>
-          <div className="text-2xl font-bold text-gray-900">
-            {inactiveCustomers}
+          <div className="text-xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600 md:text-2xl">
+            {
+              clients.filter((client) => {
+                const weekAgo = new Date()
+                weekAgo.setDate(weekAgo.getDate() - 7)
+                return new Date(client.createdAt) > weekAgo
+              }).length
+            }
           </div>
-          <p className="text-xs text-gray-500">Sem pedidos há 30+ dias</p>
+        </div>
+
+        <div className="group rounded-sm border border-gray-300 bg-white p-3 shadow transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md md:p-4">
+          <div className="mb-1 flex items-center justify-between md:mb-2">
+            <h3 className="text-xs font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:text-orange-900 md:text-sm">
+              Clientes sem Endereço
+            </h3>
+            <AlertCircle className="h-3 w-3 text-red-600 md:h-4 md:w-4" />
+          </div>
+          <div className="text-xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600 md:text-2xl">
+            {clients.filter((client) => !client.address).length}
+          </div>
         </div>
       </div>
 
-      <div className="flex flex-col gap-4 sm:flex-row">
-        <div className="relative flex-1">
-          <Search className="absolute top-3 left-3 h-4 w-4 text-gray-400" />
-          <Input
-            placeholder="Buscar por nome, email ou telefone..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-        <div className="relative">
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm sm:w-48"
-          >
-            <option value="all">Todos os Status</option>
-            <option value="vip">VIP</option>
-            <option value="active">Ativos</option>
-            <option value="inactive">Inativos</option>
-          </select>
-        </div>
-      </div>
+      <input
+        type="text"
+        onChange={(e) => setSearchTerm(e.target.value)}
+        placeholder="Buscar cliente por nome, telefone ou ID"
+        className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-600 transition-all duration-300 ease-in-out hover:shadow-md hover:shadow-orange-200 focus:border-orange-600 focus:shadow-md focus:shadow-orange-200 focus:outline-none active:border-orange-600 md:px-4 md:text-base"
+      />
 
-      <div className="border-b border-gray-200">
-        <nav className="-mb-px flex space-x-8">
-          {[
-            { id: 'all', label: `Todos (${totalCustomers})` },
-            { id: 'vip', label: `VIP (${vipCustomers})` },
-            { id: 'active', label: `Ativos (${activeCustomers})` },
-            { id: 'inactive', label: `Inativos (${inactiveCustomers})` },
-          ].map((tab) => (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`border-b-2 px-1 py-2 text-sm font-medium ${
-                activeTab === tab.id
-                  ? 'border-orange-500 text-orange-600'
-                  : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700'
-              }`}
+      <div className="mt-4 rounded-xl border border-gray-200 bg-white p-4 shadow md:p-6">
+        {filteredClients.length > 0 ? (
+          filteredClients.map((client) => (
+            <div
+              key={client.id}
+              className="mb-4 grid grid-cols-1 gap-4 rounded-xl border border-gray-300 bg-gray-50 p-4 transition-all duration-300 hover:shadow-md lg:grid-cols-4"
             >
-              {tab.label}
-            </button>
-          ))}
-        </nav>
-      </div>
-
-      <div className="grid gap-4">
-        {filteredCustomers.map((customer) => (
-          <div
-            key={customer.id}
-            className="rounded-lg border bg-white p-6 shadow"
-          >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-orange-100">
-                  <span className="text-lg font-semibold text-orange-600">
-                    {customer.name.charAt(0).toUpperCase()}
-                  </span>
+              <div className="rounded-lg bg-white p-3 shadow-sm md:p-4">
+                <h2 className="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase md:mb-2 md:text-sm">
+                  Cliente
+                </h2>
+                <div className="flex items-center">
+                  <User className="mr-1 h-4 w-4 text-gray-600 md:mr-2 md:h-5 md:w-5" />
+                  <p className="text-base font-bold text-gray-800 md:text-lg">
+                    {client.name}
+                  </p>
                 </div>
-                <div>
-                  <div className="flex items-center space-x-2">
-                    <h3 className="font-semibold">{customer.name}</h3>
-                    <span className={getStatusBadge(customer.status)}>
-                      {getStatusText(customer.status)}
-                    </span>
-                  </div>
-                  <div className="mt-1 flex items-center space-x-4 text-sm text-gray-500">
-                    <div className="flex items-center space-x-1">
-                      <Phone className="h-3 w-3" />
-                      <span>{customer.phone}</span>
-                    </div>
-                    <div className="flex items-center space-x-1">
-                      <Mail className="h-3 w-3" />
-                      <span>{customer.email}</span>
-                    </div>
-                  </div>
-                  <div className="mt-1 flex items-center space-x-1 text-sm text-gray-500">
-                    <MapPin className="h-3 w-3" />
-                    <span>{customer.address}</span>
-                  </div>
+                <div className="mt-1 flex items-center md:mt-2">
+                  <Phone className="mr-1 h-4 w-4 text-gray-600 md:mr-2 md:h-5 md:w-5" />
+                  <p className="text-xs text-gray-700 md:text-sm">
+                    {client.phone}
+                  </p>
+                </div>
+                <div className="mt-1 flex items-center md:mt-2">
+                  <Calendar className="mr-1 h-4 w-4 text-gray-600 md:mr-2 md:h-5 md:w-5" />
+                  <p className="text-xs text-gray-700 md:text-sm">
+                    Cadastrado em: {formatDate(client.createdAt)}
+                  </p>
                 </div>
               </div>
 
-              <div className="flex items-center space-x-4">
-                <div className="text-right">
-                  <div className="flex items-center space-x-4 text-sm">
-                    <div>
-                      <p className="font-semibold">
-                        {customer.totalOrders} pedidos
-                      </p>
-                      <p className="text-gray-500">Total</p>
-                    </div>
-                    <div>
-                      <p className="font-semibold">
-                        R$ {customer.totalSpent.toFixed(2)}
-                      </p>
-                      <p className="text-gray-500">Gasto</p>
+              <div className="rounded-lg bg-white p-3 shadow-sm md:p-4 lg:col-span-2">
+                <h2 className="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase md:mb-2 md:text-sm">
+                  Endereço
+                </h2>
+                {client.address ? (
+                  <div>
+                    <div className="flex items-start">
+                      <MapPin className="mt-[2px] mr-1 h-4 w-4 text-gray-600 md:mr-2 md:h-5 md:w-5" />
+                      <div>
+                        <p className="text-xs leading-snug text-gray-700 md:text-sm">
+                          {client.address.street}, {client.address.number}
+                        </p>
+                        <p className="text-xs leading-snug text-gray-700 md:text-sm">
+                          {client.address.neighborhood}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <p className="text-xs text-gray-500 md:text-sm">
+                    Nenhum endereço cadastrado
+                  </p>
+                )}
+              </div>
 
-                <div className="flex space-x-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => setSelectedCustomer(customer)}
-                  >
-                    <Eye className="h-4 w-4" />
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => {
-                      setSelectedCustomer(customer)
-                      setIsEditDialogOpen(true)
-                    }}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </div>
+              <div className="flex flex-col items-center justify-center gap-2 rounded-lg bg-white p-3 shadow-sm md:p-4">
+                <button
+                  onClick={() => {
+                    setIsEditing(true)
+                    setEditingClient(client)
+                  }}
+                  className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-md bg-blue-600 px-2 py-1.5 text-xs text-white transition-colors hover:bg-blue-700 md:gap-2 md:px-4 md:py-2 md:text-sm"
+                >
+                  <Edit className="h-3 w-3 md:h-4 md:w-4" />
+                  Editar
+                </button>
+
+                <button
+                  onClick={() => setClientToDelete(client)}
+                  className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-md bg-red-600 px-2 py-1.5 text-xs text-white transition-colors hover:bg-red-700 md:gap-2 md:px-4 md:py-2 md:text-sm"
+                >
+                  <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
+                  Excluir
+                </button>
               </div>
             </div>
-          </div>
-        ))}
-
-        {filteredCustomers.length === 0 && (
-          <div className="rounded-lg border bg-white p-12 text-center shadow">
-            <p className="text-gray-500">Nenhum cliente encontrado</p>
-          </div>
+          ))
+        ) : (
+          <p className="py-6 text-center text-sm text-gray-600 md:text-base">
+            Nenhum cliente encontrado.
+          </p>
         )}
       </div>
 
-      {selectedCustomer && !isEditDialogOpen && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
-          <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Detalhes do Cliente</h2>
+      {clientToDelete && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+          <div
+            className="w-11/12 max-w-md rounded-lg bg-white p-4 shadow-lg md:p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-3 flex items-center justify-between md:mb-4">
+              <h2 className="text-lg font-bold text-red-600 md:text-xl">
+                Confirmar Exclusão
+              </h2>
               <button
-                onClick={() => setSelectedCustomer(null)}
-                className="text-gray-400 hover:text-gray-600"
+                onClick={() => setClientToDelete(null)}
+                className="cursor-pointer text-gray-600 hover:text-gray-900"
               >
-                <X className="h-6 w-6" />
+                <X className="h-5 w-5 md:h-6 md:w-6" />
               </button>
             </div>
-            <CustomerDetails customer={selectedCustomer} />
+
+            <div className="space-y-3 md:space-y-4">
+              <p className="text-sm text-gray-700 md:text-base">
+                Tem certeza que deseja excluir o cliente{' '}
+                <strong>{clientToDelete.name}</strong>?
+              </p>
+              <p className="text-xs text-red-600 md:text-sm">
+                Esta ação não pode ser desfeita. Todos os dados deste cliente
+                serão permanentemente removidos do sistema.
+              </p>
+            </div>
+
+            <div className="mt-4 flex justify-end gap-2 md:mt-6 md:gap-3">
+              <button
+                onClick={() => setClientToDelete(null)}
+                className="cursor-pointer rounded-md bg-gray-200 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-300 md:px-4 md:py-2 md:text-sm"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => deleteClient(clientToDelete.id)}
+                className="cursor-pointer rounded-md bg-red-600 px-3 py-1.5 text-xs text-white hover:bg-red-700 md:px-4 md:py-2 md:text-sm"
+              >
+                Sim, Excluir
+              </button>
+            </div>
           </div>
         </div>
       )}
 
-      {isAddDialogOpen && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Adicionar Novo Cliente</h2>
-              <button
-                onClick={() => setIsAddDialogOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
-              >
-                <X className="h-6 w-6" />
-              </button>
-            </div>
-            <CustomerForm onClose={() => setIsAddDialogOpen(false)} />
-          </div>
-        </div>
-      )}
-
-      {isEditDialogOpen && selectedCustomer && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
-          <div className="w-full max-w-md rounded-lg bg-white p-6">
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-semibold">Editar Cliente</h2>
+      {(isNewClientOpen || isEditing) && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+        >
+          <div
+            className="w-11/12 max-w-2xl rounded-lg bg-white p-4 shadow-lg md:p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-3 flex items-center justify-between md:mb-4">
+              <h2 className="text-lg font-bold text-gray-900 md:text-xl">
+                {isEditing ? 'Editar Cliente' : 'Novo Cliente'}
+              </h2>
               <button
                 onClick={() => {
-                  setIsEditDialogOpen(false)
-                  setSelectedCustomer(null)
+                  setIsNewClientOpen(false)
+                  setIsEditing(false)
+                  setEditingClient(null)
                 }}
-                className="text-gray-400 hover:text-gray-600"
+                className="cursor-pointer text-gray-600 hover:text-gray-900"
               >
-                <X className="h-6 w-6" />
+                <X className="h-5 w-5 md:h-6 md:w-6" />
               </button>
             </div>
-            <CustomerForm
-              customer={selectedCustomer}
-              onClose={() => {
-                setIsEditDialogOpen(false)
-                setSelectedCustomer(null)
+
+            <form
+              className="flex flex-col gap-3 md:gap-4"
+              onSubmit={(e) => {
+                e.preventDefault()
+                const formData = new FormData(e.currentTarget)
+                const name = formData.get('name') as string
+                const phone = formData.get('phone') as string
+                const street = formData.get('street') as string
+                const number = formData.get('number') as string
+                const neighborhood = formData.get('neighborhood') as string
+                const zip = formData.get('zip') as string
+
+                const address =
+                  street && number && neighborhood && zip
+                    ? {
+                        street,
+                        number,
+                        neighborhood,
+                        zip,
+                      }
+                    : undefined
+
+                if (isEditing && editingClient) {
+                  updateClient({
+                    id: editingClient.id,
+                    name,
+                    phone,
+                    address,
+                  })
+                } else {
+                  createNewClient({
+                    name,
+                    phone,
+                    address,
+                  })
+                }
+
+                e.currentTarget.reset()
               }}
-            />
-          </div>
-        </div>
-      )}
-    </div>
-  )
-}
-
-function CustomerDetails({ customer }: { customer: Customer }) {
-  return (
-    <div className="space-y-6">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="text-sm font-medium text-gray-500">Nome</label>
-          <p className="mt-1">{customer.name}</p>
-        </div>
-        <div>
-          <label className="text-sm font-medium text-gray-500">Status</label>
-          <div className="mt-1">
-            <span
-              className={
-                customer.status === 'vip'
-                  ? 'rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800'
-                  : customer.status === 'active'
-                    ? 'rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800'
-                    : 'rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-800'
-              }
             >
-              {customer.status === 'vip'
-                ? 'VIP'
-                : customer.status === 'active'
-                  ? 'Ativo'
-                  : 'Inativo'}
-            </span>
+              <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700 md:text-sm">
+                    Nome completo *
+                  </label>
+                  <input
+                    name="name"
+                    placeholder="Nome do cliente"
+                    className="w-full rounded border border-gray-300 p-2 text-sm md:text-base"
+                    required
+                    defaultValue={isEditing ? editingClient?.name : ''}
+                  />
+                </div>
+
+                <div>
+                  <label className="mb-1 block text-xs font-medium text-gray-700 md:text-sm">
+                    Telefone *
+                  </label>
+                  <input
+                    name="phone"
+                    placeholder="Telefone"
+                    className="w-full rounded border border-gray-300 p-2 text-sm md:text-base"
+                    required
+                    defaultValue={isEditing ? editingClient?.phone : ''}
+                  />
+                </div>
+              </div>
+
+              <div className="mt-2">
+                <h3 className="mb-2 text-sm font-semibold text-gray-800 md:text-base">
+                  Endereço (opcional)
+                </h3>
+                <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-gray-700 md:text-sm">
+                      Rua
+                    </label>
+                    <input
+                      name="street"
+                      placeholder="Nome da rua"
+                      className="w-full rounded border border-gray-300 p-2 text-sm md:text-base"
+                      defaultValue={
+                        isEditing && editingClient?.address
+                          ? editingClient.address.street
+                          : ''
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-gray-700 md:text-sm">
+                      Número
+                    </label>
+                    <input
+                      name="number"
+                      placeholder="Número"
+                      className="w-full rounded border border-gray-300 p-2 text-sm md:text-base"
+                      defaultValue={
+                        isEditing && editingClient?.address
+                          ? editingClient.address.number
+                          : ''
+                      }
+                    />
+                  </div>
+
+                  <div>
+                    <label className="mb-1 block text-xs font-medium text-gray-700 md:text-sm">
+                      Bairro
+                    </label>
+                    <input
+                      name="neighborhood"
+                      placeholder="Bairro"
+                      className="w-full rounded border border-gray-300 p-2 text-sm md:text-base"
+                      defaultValue={
+                        isEditing && editingClient?.address
+                          ? editingClient.address.neighborhood
+                          : ''
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 flex justify-end gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsNewClientOpen(false)
+                    setIsEditing(false)
+                    setEditingClient(null)
+                  }}
+                  className="cursor-pointer rounded bg-gray-200 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-300 md:px-4 md:py-2 md:text-sm"
+                >
+                  Cancelar
+                </button>
+                <button
+                  type="submit"
+                  className="cursor-pointer rounded bg-orange-600 px-3 py-1.5 text-xs text-white hover:bg-orange-700 md:px-4 md:py-2 md:text-sm"
+                >
+                  {isEditing ? 'Atualizar Cliente' : 'Criar Cliente'}
+                </button>
+              </div>
+            </form>
           </div>
-        </div>
-        <div>
-          <label className="text-sm font-medium text-gray-500">Email</label>
-          <p className="mt-1">{customer.email}</p>
-        </div>
-        <div>
-          <label className="text-sm font-medium text-gray-500">Telefone</label>
-          <p className="mt-1">{customer.phone}</p>
-        </div>
-      </div>
-
-      <div>
-        <label className="text-sm font-medium text-gray-500">Endereço</label>
-        <p className="mt-1">{customer.address}</p>
-      </div>
-
-      <div className="grid grid-cols-3 gap-4">
-        <div>
-          <label className="text-sm font-medium text-gray-500">
-            Total de Pedidos
-          </label>
-          <p className="mt-1 text-2xl font-bold">{customer.totalOrders}</p>
-        </div>
-        <div>
-          <label className="text-sm font-medium text-gray-500">
-            Total Gasto
-          </label>
-          <p className="mt-1 text-2xl font-bold">
-            R$ {customer.totalSpent.toFixed(2)}
-          </p>
-        </div>
-        <div>
-          <label className="text-sm font-medium text-gray-500">
-            Último Pedido
-          </label>
-          <p className="mt-1">
-            {new Date(customer.lastOrderDate).toLocaleDateString('pt-BR')}
-          </p>
-        </div>
-      </div>
-
-      <div>
-        <label className="text-sm font-medium text-gray-500">
-          Cliente desde
-        </label>
-        <p className="mt-1">
-          {new Date(customer.registeredAt).toLocaleDateString('pt-BR')}
-        </p>
-      </div>
-
-      {customer.notes && (
-        <div>
-          <label className="text-sm font-medium text-gray-500">
-            Observações
-          </label>
-          <p className="mt-1 rounded-md bg-gray-50 p-3 text-sm">
-            {customer.notes}
-          </p>
-        </div>
+        </motion.div>
       )}
-    </div>
-  )
-}
-
-function CustomerForm({
-  customer,
-  onClose,
-}: {
-  customer?: Customer
-  onClose: () => void
-}) {
-  return (
-    <div className="space-y-4">
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label
-            htmlFor="name"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Nome
-          </label>
-          <Input
-            id="name"
-            defaultValue={customer?.name}
-            placeholder="Nome completo"
-          />
-        </div>
-        <div>
-          <label
-            htmlFor="phone"
-            className="block text-sm font-medium text-gray-700"
-          >
-            Telefone
-          </label>
-          <Input
-            id="phone"
-            defaultValue={customer?.phone}
-            placeholder="(11) 99999-9999"
-          />
-        </div>
-      </div>
-
-      <div>
-        <label
-          htmlFor="email"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Email
-        </label>
-        <Input
-          id="email"
-          type="email"
-          defaultValue={customer?.email}
-          placeholder="email@exemplo.com"
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="address"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Endereço
-        </label>
-        <Input
-          id="address"
-          defaultValue={customer?.address}
-          placeholder="Endereço completo"
-        />
-      </div>
-
-      <div>
-        <label
-          htmlFor="status"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Status
-        </label>
-        <select
-          id="status"
-          defaultValue={customer?.status || 'active'}
-          className="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm"
-        >
-          <option value="active">Ativo</option>
-          <option value="vip">VIP</option>
-          <option value="inactive">Inativo</option>
-        </select>
-      </div>
-
-      <div>
-        <label
-          htmlFor="notes"
-          className="block text-sm font-medium text-gray-700"
-        >
-          Observações
-        </label>
-        <textarea
-          id="notes"
-          defaultValue={customer?.notes}
-          placeholder="Observações sobre o cliente..."
-          className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-          rows={3}
-        />
-      </div>
-
-      <div className="flex justify-end space-x-2">
-        <Button variant="outline" onClick={onClose}>
-          Cancelar
-        </Button>
-        <Button onClick={onClose}>{customer ? 'Salvar' : 'Adicionar'}</Button>
-      </div>
     </div>
   )
 }

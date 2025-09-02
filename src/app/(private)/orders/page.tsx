@@ -25,8 +25,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { get } from 'http'
-import { is } from 'zod/v4/locales'
 
 type OrderStatus = 'pending' | 'preparing' | 'ready' | 'delivered' | 'cancelled'
 
@@ -262,100 +260,100 @@ export default function OrdersManagement() {
   }
 
   return (
-    <div className="space-y-6 p-10 md:p-4">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 p-4 md:p-6 lg:p-8">
+      <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center">
         <div>
-          <h1 className="relative text-3xl font-bold text-gray-900">
+          <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
             <span className="relative text-orange-500">
-              GESTÃO {''}
-              <div className="absolute bottom-0 left-[-5px] h-[.1px] w-full bg-orange-600"></div>{' '}
+              GESTÃO{' '}
+              <div className="absolute bottom-0 left-0 h-[1px] w-full bg-orange-600"></div>
             </span>
             DE PEDIDOS
           </h1>
-          <p className="text-gray-600">
+          <p className="text-sm text-gray-600 md:text-base">
             Gerencie todos os pedidos da sua galeteria
           </p>
         </div>
-        <div className="flex space-x-4">
+        <div className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-2">
           <button
-            onClick={() =>
-              setChickenQuantityModal(() =>
-                chickenQuantityModal ? false : true
-              )
-            }
-            className="flex cursor-pointer items-center space-x-2 rounded-md bg-orange-600 px-4 py-2 text-white hover:bg-orange-700"
+            onClick={() => setChickenQuantityModal(!chickenQuantityModal)}
+            className="flex cursor-pointer items-center justify-center space-x-2 rounded-md bg-orange-600 px-3 py-2 text-white hover:bg-orange-700 sm:px-4"
           >
             <Plus className="h-4 w-4" />
-            <span className="">Quantidade de frango</span>
+            <span className="text-xs font-semibold sm:text-sm">
+              Quantidade de frango
+            </span>
           </button>
 
           <button
             onClick={() => setIsNewOrderOpen(true)}
-            className="flex cursor-pointer items-center space-x-2 rounded-md bg-orange-600 px-4 py-2 text-white hover:bg-orange-700"
+            className="flex cursor-pointer items-center justify-center space-x-2 rounded-md bg-orange-600 px-3 py-2 text-white hover:bg-orange-700 sm:px-4"
           >
             <Plus className="h-4 w-4" />
-            <span className="">Novo Pedido</span>
+            <span className="text-xs font-semibold sm:text-sm">
+              Novo Pedido
+            </span>
           </button>
         </div>
       </div>
 
-      <div className="grid w-full gap-4 md:grid-cols-2 lg:grid-cols-5">
-        <div className="group rounded-sm border-t border-r-1 border-l-1 border-gray-300 border-r-orange-600/30 border-l-orange-600/30 bg-white p-4 shadow-lg shadow-orange-200 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:scale-105 group-hover:text-orange-900">
+      <div className="grid grid-cols-2 gap-3 md:grid-cols-3 lg:grid-cols-5">
+        <div className="group rounded-sm border border-gray-300 bg-white p-3 shadow transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md md:p-4">
+          <div className="mb-1 flex items-center justify-between md:mb-2">
+            <h3 className="text-xs font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:text-orange-900 md:text-sm">
               Total de Frangos
             </h3>
-            <Eye className="h-4 w-4 text-blue-600" />
+            <Eye className="h-3 w-3 text-blue-600 md:h-4 md:w-4" />
           </div>
-          <div className="text-2xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600">
+          <div className="text-xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600 md:text-2xl">
             {chickenQuantity}
           </div>
         </div>
 
-        <div className="group rounded-sm border-t border-r-1 border-l-1 border-gray-300 border-r-orange-600/30 border-l-orange-600/30 bg-white p-4 shadow-lg shadow-orange-200 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:scale-105 group-hover:text-orange-900">
+        <div className="group rounded-sm border border-gray-300 bg-white p-3 shadow transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md md:p-4">
+          <div className="mb-1 flex items-center justify-between md:mb-2">
+            <h3 className="text-xs font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:text-orange-900 md:text-sm">
               Clientes Pendentes
             </h3>
-            <AlertTriangle className="h-4 w-4 text-blue-600" />
+            <AlertTriangle className="h-3 w-3 text-blue-600 md:h-4 md:w-4" />
           </div>
-          <div className="text-2xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600">
+          <div className="text-xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600 md:text-2xl">
             {getOrdersByStatus('pending').length}
           </div>
         </div>
 
-        <div className="group rounded-sm border-t border-r-1 border-l-1 border-gray-300 border-r-orange-600/30 border-l-orange-600/30 bg-white p-4 shadow-lg shadow-orange-200 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:scale-105 group-hover:text-orange-900">
+        <div className="group rounded-sm border border-gray-300 bg-white p-3 shadow transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md md:p-4">
+          <div className="mb-1 flex items-center justify-between md:mb-2">
+            <h3 className="text-xs font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:text-orange-900 md:text-sm">
               Frangos Prontos
             </h3>
-            <AlertTriangle className="h-4 w-4 text-blue-600" />
+            <AlertTriangle className="h-3 w-3 text-blue-600 md:h-4 md:w-4" />
           </div>
-          <div className="text-2xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600">
+          <div className="text-xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600 md:text-2xl">
             {getOrdersByStatus('ready').length}
           </div>
         </div>
 
-        <div className="group rounded-sm border-t border-r-1 border-l-1 border-gray-300 border-r-orange-600/30 border-l-orange-600/30 bg-white p-4 shadow-lg shadow-orange-200 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:scale-105 group-hover:text-orange-900">
+        <div className="group rounded-sm border border-gray-300 bg-white p-3 shadow transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md md:p-4">
+          <div className="mb-1 flex items-center justify-between md:mb-2">
+            <h3 className="text-xs font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:text-orange-900 md:text-sm">
               Entregados
             </h3>
-            <CheckCircle className="h-4 w-4 text-green-600" />
+            <CheckCircle className="h-3 w-3 text-green-600 md:h-4 md:w-4" />
           </div>
-          <div className="text-2xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600">
+          <div className="text-xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600 md:text-2xl">
             {getOrdersByStatus('delivered').length}
           </div>
         </div>
 
-        <div className="group rounded-sm border-t border-r-1 border-l-1 border-gray-300 border-r-orange-600/30 border-l-orange-600/30 bg-white p-4 shadow-lg shadow-orange-200 transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-2xl">
-          <div className="mb-2 flex items-center justify-between">
-            <h3 className="text-sm font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:scale-105 group-hover:text-orange-900">
+        <div className="group rounded-sm border border-gray-300 bg-white p-3 shadow transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-md md:p-4 lg:col-span-1">
+          <div className="mb-1 flex items-center justify-between md:mb-2">
+            <h3 className="text-xs font-medium text-gray-600 transition-all duration-300 ease-in-out group-hover:text-orange-900 md:text-sm">
               Cancelados
             </h3>
-            <AlertTriangle className="h-4 w-4 text-red-600" />
+            <AlertTriangle className="h-3 w-3 text-red-600 md:h-4 md:w-4" />
           </div>
-          <div className="text-2xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600">
+          <div className="text-xl font-bold text-gray-900 transition-all duration-300 ease-in-out group-hover:text-orange-600 md:text-2xl">
             {getOrdersByStatus('cancelled').length}
           </div>
         </div>
@@ -365,44 +363,45 @@ export default function OrdersManagement() {
         type="text"
         onChange={(e) => setSearchTerm(e.target.value)}
         placeholder="Buscar pedido"
-        className="w-full rounded border border-gray-300 px-4 py-2 text-gray-600 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-200 focus:border-orange-600 focus:shadow-lg focus:shadow-orange-200 focus:outline-none active:border-orange-600"
+        className="w-full rounded border border-gray-300 px-3 py-2 text-sm text-gray-600 transition-all duration-300 ease-in-out hover:shadow-md hover:shadow-orange-200 focus:border-orange-600 focus:shadow-md focus:shadow-orange-200 focus:outline-none active:border-orange-600 md:px-4 md:text-base"
       />
 
-      <div className="mt-6 rounded-xl border border-gray-200 bg-white p-6 shadow-lg">
+      <div className="mt-4 rounded-xl border border-gray-200 bg-white p-4 shadow md:p-6">
         {getOrdersForActiveTab().length > 0 ? (
           getOrdersForActiveTab().map((order) => (
             <div
               key={order.id}
-              className="mb-6 grid grid-cols-1 gap-6 rounded-xl border border-gray-300 bg-gray-50 p-6 transition-all duration-300 hover:shadow-lg lg:grid-cols-4"
+              className="mb-4 grid grid-cols-1 gap-4 rounded-xl border border-gray-300 bg-gray-50 p-4 transition-all duration-300 hover:shadow-md lg:grid-cols-4"
             >
-              <div className="rounded-lg bg-white p-4 shadow-sm">
-                <h2 className="mb-2 text-sm font-semibold tracking-wide text-gray-500 uppercase">
+              <div className="rounded-lg bg-white p-3 shadow-sm md:p-4">
+                <h2 className="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase md:mb-2 md:text-sm">
                   Cliente
                 </h2>
                 <div className="flex items-center">
-                  <User className="mr-2 h-5 w-5 text-gray-600" />
-                  <p className="text-lg font-bold text-gray-800">
+                  <User className="mr-1 h-4 w-4 text-gray-600 md:mr-2 md:h-5 md:w-5" />
+                  <p className="text-base font-bold text-gray-800 md:text-lg">
                     {order.customer}
                   </p>
                 </div>
-                <div className="mt-2 flex items-center">
-                  <Phone className="mr-2 h-5 w-5 text-gray-600" />
-                  <p className="text-sm text-gray-700">{order.phone}</p>
+                <div className="mt-1 flex items-center md:mt-2">
+                  <Phone className="mr-1 h-4 w-4 text-gray-600 md:mr-2 md:h-5 md:w-5" />
+                  <p className="text-xs text-gray-700 md:text-sm">
+                    {order.phone}
+                  </p>
                 </div>
               </div>
 
-              <div className="rounded-lg bg-white p-4 shadow-sm lg:col-span-2">
-                <h2 className="mb-2 text-sm font-semibold tracking-wide text-gray-500 uppercase">
+              <div className="rounded-lg bg-white p-3 shadow-sm md:p-4 lg:col-span-2">
+                <h2 className="mb-1 text-xs font-semibold tracking-wide text-gray-500 uppercase md:mb-2 md:text-sm">
                   Detalhes
                 </h2>
 
                 <div>
-                  {' '}
-                  <div className="mb-4">
-                    <h3 className="mb-1 text-base font-semibold text-gray-800">
+                  <div className="mb-2 md:mb-4">
+                    <h3 className="mb-1 text-sm font-semibold text-gray-800 md:text-base">
                       Pedido
                     </h3>
-                    <ul className="list-disc space-y-1 pl-5 text-sm text-gray-700">
+                    <ul className="list-disc space-y-1 pl-4 text-xs text-gray-700 md:pl-5 md:text-sm">
                       {order.items.map((item, index) => (
                         <li key={index}>
                           {item.quantity}x {item.name}
@@ -412,13 +411,14 @@ export default function OrdersManagement() {
                   </div>
                   {order.isDelivery && order.address && (
                     <div>
-                      <h3 className="mb-1 text-base font-semibold text-gray-800">
+                      <h3 className="mb-1 text-sm font-semibold text-gray-800 md:text-base">
                         Endereço
                       </h3>
                       <div className="flex items-start">
-                        <MapPin className="mt-[2px] mr-2 h-5 w-5 text-gray-600" />
-                        <p className="text-sm leading-snug text-gray-700">
+                        <MapPin className="mt-[2px] mr-1 h-4 w-4 text-gray-600 md:mr-2 md:h-5 md:w-5" />
+                        <p className="text-xs leading-snug text-gray-700 md:text-sm">
                           {order.address.street}, {order.address.number} -{' '}
+                          {order.address.neighborhood}
                         </p>
                       </div>
                     </div>
@@ -426,12 +426,12 @@ export default function OrdersManagement() {
                 </div>
               </div>
 
-              <div className="flex flex-col items-center justify-center rounded-lg bg-white p-4 shadow-sm">
-                <div className="mb-4 text-center">
-                  <h2 className="text-base font-semibold text-gray-800">
+              <div className="flex flex-col items-center justify-center rounded-lg bg-white p-3 shadow-sm md:p-4">
+                <div className="mb-2 text-center md:mb-4">
+                  <h2 className="text-sm font-semibold text-gray-800 md:text-base">
                     Preço Total
                   </h2>
-                  <span className="mt-1 text-2xl font-bold text-orange-600">
+                  <span className="mt-1 text-xl font-bold text-orange-600 md:text-2xl">
                     R$ {order.total.toFixed(2)}
                   </span>
                 </div>
@@ -442,11 +442,13 @@ export default function OrdersManagement() {
                     throw new Error('Function not implemented.')
                   }}
                 >
-                  <DropdownMenuTrigger className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border border-gray-300 bg-gray-100 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200">
+                  <DropdownMenuTrigger className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-md border border-gray-300 bg-gray-100 px-2 py-1 text-xs text-gray-700 transition-colors hover:bg-gray-200 md:gap-2 md:px-4 md:py-2 md:text-sm">
                     {getStatusText(order.status)} {getStatusIcon(order.status)}
                   </DropdownMenuTrigger>
                   <DropdownMenuContent>
-                    <DropdownMenuLabel>Situação:</DropdownMenuLabel>
+                    <DropdownMenuLabel className="text-xs md:text-sm">
+                      Situação:
+                    </DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     {(
                       [
@@ -460,7 +462,7 @@ export default function OrdersManagement() {
                         key={status}
                         onSelect={() => updateOrderStatus(order.id, status)}
                         value={status}
-                        className="cursor-pointer capitalize"
+                        className="cursor-pointer text-xs capitalize md:text-sm"
                       >
                         {getStatusText(status)} {getStatusIcon(status)}
                       </DropdownMenuItem>
@@ -471,32 +473,32 @@ export default function OrdersManagement() {
             </div>
           ))
         ) : (
-          <p className="py-10 text-center text-gray-600">
+          <p className="py-6 text-center text-sm text-gray-600 md:text-base">
             Nenhum pedido encontrado.
           </p>
         )}
       </div>
 
       {chickenQuantityModal && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
           <div
-            className="w-full max-w-md rounded-lg bg-white p-6 shadow-lg"
+            className="w-11/12 max-w-md rounded-lg bg-white p-4 shadow-lg md:p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">
+            <div className="mb-3 flex items-center justify-between md:mb-4">
+              <h2 className="text-lg font-bold text-gray-900 md:text-xl">
                 Definir Quantidade de Frangos do Dia
               </h2>
               <button
                 onClick={() => setChickenQuantityModal(false)}
                 className="cursor-pointer text-gray-600 hover:text-gray-900"
               >
-                <X className="h-6 w-6" />
+                <X className="h-5 w-5 md:h-6 md:w-6" />
               </button>
             </div>
 
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-gray-700">
+            <div className="space-y-3 md:space-y-4">
+              <label className="block text-xs font-medium text-gray-700 md:text-sm">
                 Quantidade disponível:
               </label>
               <input
@@ -506,14 +508,14 @@ export default function OrdersManagement() {
                 onChange={(e) =>
                   setChickenQuantity(Math.max(0, parseInt(e.target.value) || 0))
                 }
-                className="no-spinner w-full rounded border border-gray-300 p-2 text-center text-lg font-bold outline-none focus:border-orange-600 focus:ring-2 focus:ring-orange-600"
+                className="no-spinner w-full rounded border border-gray-300 p-2 text-center text-base font-bold outline-none focus:border-orange-600 focus:ring-2 focus:ring-orange-600 md:text-lg"
               />
             </div>
 
-            <div className="mt-6 flex justify-end gap-3">
+            <div className="mt-4 flex justify-end gap-2 md:mt-6 md:gap-3">
               <button
                 onClick={() => setChickenQuantityModal(false)}
-                className="cursor-pointer rounded-md bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300"
+                className="cursor-pointer rounded-md bg-gray-200 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-300 md:px-4 md:py-2 md:text-sm"
               >
                 Cancelar
               </button>
@@ -521,7 +523,7 @@ export default function OrdersManagement() {
                 onClick={() => {
                   setChickenQuantityModal(false)
                 }}
-                className="cursor-pointer rounded-md bg-orange-600 px-4 py-2 text-white hover:bg-orange-700"
+                className="cursor-pointer rounded-md bg-orange-600 px-3 py-1.5 text-xs text-white hover:bg-orange-700 md:px-4 md:py-2 md:text-sm"
               >
                 Confirmar
               </button>
@@ -535,24 +537,26 @@ export default function OrdersManagement() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.3 }}
-          className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
         >
           <div
-            className="w-full max-w-2xl rounded-lg bg-white p-6 shadow-lg"
+            className="w-11/12 max-w-2xl rounded-lg bg-white p-4 shadow-lg md:p-6"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="mb-4 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-gray-900">Novo Pedido</h2>
+            <div className="mb-3 flex items-center justify-between md:mb-4">
+              <h2 className="text-lg font-bold text-gray-900 md:text-xl">
+                Novo Pedido
+              </h2>
               <button
                 onClick={() => setIsNewOrderOpen(false)}
                 className="cursor-pointer text-gray-600 hover:text-gray-900"
               >
-                <X className="h-6 w-6" />
+                <X className="h-5 w-5 md:h-6 md:w-6" />
               </button>
             </div>
 
             <form
-              className="flex flex-col gap-4"
+              className="flex flex-col gap-3 md:gap-4"
               onSubmit={(e) => {
                 e.preventDefault()
                 const formData = new FormData(e.currentTarget)
@@ -601,13 +605,13 @@ export default function OrdersManagement() {
               <input
                 name="customer"
                 placeholder="Nome do cliente"
-                className="rounded border p-2"
+                className="rounded border p-2 text-sm md:text-base"
                 required
               />
               <input
                 name="phone"
                 placeholder="Telefone"
-                className="rounded border p-2"
+                className="rounded border p-2 text-sm md:text-base"
                 required
               />
 
@@ -617,15 +621,18 @@ export default function OrdersManagement() {
                   throw new Error('Function not implemented.')
                 }}
               >
-                <DropdownMenuTrigger className="flex w-full cursor-pointer items-center justify-center gap-2 rounded-md border border-gray-300 bg-gray-100 px-4 py-2 text-sm text-gray-700 transition-colors hover:bg-gray-200">
-                  O que o cliente quer? <Filter className="h-4 w-4" />
+                <DropdownMenuTrigger className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-md border border-gray-300 bg-gray-100 px-2 py-1.5 text-xs text-gray-700 transition-colors hover:bg-gray-200 md:gap-2 md:px-4 md:py-2 md:text-sm">
+                  O que o cliente quer?{' '}
+                  <Filter className="h-3 w-3 md:h-4 md:w-4" />
                 </DropdownMenuTrigger>
-                <DropdownMenuContent>
-                  <DropdownMenuLabel>Produtos:</DropdownMenuLabel>
+                <DropdownMenuContent className="max-h-60 overflow-y-auto">
+                  <DropdownMenuLabel className="text-xs md:text-sm">
+                    Produtos:
+                  </DropdownMenuLabel>
                   <DropdownMenuSeparator />
                   {availableProducts.map((product, index) => (
                     <DropdownMenuItem
-                      className="flex cursor-pointer items-center justify-between capitalize"
+                      className="flex cursor-pointer items-center justify-between text-xs capitalize md:text-sm"
                       value=""
                       key={index}
                       onSelect={() => {
@@ -646,19 +653,21 @@ export default function OrdersManagement() {
                 </DropdownMenuContent>
               </DropdownMenu>
 
-              <div className="items-between flex max-h-40 flex-col justify-center gap-2 overflow-y-auto p-2">
+              <div className="flex max-h-32 flex-col gap-1 overflow-y-auto p-1 md:max-h-40 md:gap-2 md:p-2">
                 {selectedProducts.map((product, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between border-b p-2"
+                    className="flex items-center justify-between border-b p-1 text-xs md:p-2 md:text-sm"
                   >
-                    <span>{product.name}</span>
-                    <div>
-                      <label className="mr-2" htmlFor="quantity">
-                        Quatidade:
+                    <span className="max-w-[100px] truncate md:max-w-none">
+                      {product.name}
+                    </span>
+                    <div className="flex items-center">
+                      <label className="mr-1" htmlFor="quantity">
+                        Qtd:
                       </label>
                       <input
-                        className="no-spinner w-16 rounded bg-gray-100 p-1 text-center font-bold outline-none"
+                        className="no-spinner w-12 rounded bg-gray-100 p-1 text-center font-bold outline-none md:w-16"
                         type="number"
                         name="quantity"
                         id="quantity"
@@ -674,20 +683,20 @@ export default function OrdersManagement() {
                     <span>R$ {product.price.toFixed(2)}</span>
                     <button
                       type="button"
-                      className="ml-2 cursor-pointer text-red-600 hover:text-red-800"
+                      className="ml-1 cursor-pointer text-red-600 hover:text-red-800 md:ml-2"
                       onClick={() =>
                         setSelectedProducts((prev) =>
                           prev.filter((p) => p.name !== product.name)
                         )
                       }
                     >
-                      Remover
+                      <X className="h-4 w-4" />
                     </button>
                   </div>
                 ))}
               </div>
 
-              <div className="text-right font-bold">
+              <div className="text-right text-sm font-bold md:text-base">
                 Preço Total: R${' '}
                 {selectedProducts && selectedProducts.length === 0
                   ? '0.00'
@@ -703,17 +712,15 @@ export default function OrdersManagement() {
 
               <div className="flex items-center space-x-2">
                 <Checkbox
-                  className="dark:focus:ring-offset-opacity-50 cursor-pointer border-black text-gray-700 hover:text-gray-900 focus:ring-2 focus:ring-orange-600 focus:ring-offset-2 focus:ring-offset-white dark:text-gray-400 dark:checked:bg-orange-600 dark:checked:text-white dark:hover:text-white dark:focus:ring-orange-600 dark:focus:ring-offset-gray-800"
+                  className="cursor-pointer border-black text-gray-700 hover:text-gray-900 focus:ring-2 focus:ring-orange-600 focus:ring-offset-2"
                   name="isDelivery"
                   checked={isDelivery}
                   id="isDelivery"
                   onCheckedChange={(checked) => setIsDelivery(!!checked)}
-                >
-                  Entrega
-                </Checkbox>
+                />
                 <label
                   htmlFor="isDelivery"
-                  className="cursor-pointer text-gray-700"
+                  className="cursor-pointer text-xs text-gray-700 md:text-sm"
                 >
                   Serviço para o motoboy?
                 </label>
@@ -730,21 +737,21 @@ export default function OrdersManagement() {
                     <input
                       name="address"
                       placeholder="Bairro"
-                      className="w-full rounded border p-2 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-200 focus:border-orange-600 focus:shadow-lg focus:shadow-orange-200 focus:outline-none active:border-orange-600"
+                      className="w-full rounded border p-2 text-sm transition-all duration-300 ease-in-out hover:shadow-md hover:shadow-orange-200 focus:border-orange-600 focus:shadow-md focus:shadow-orange-200 focus:outline-none active:border-orange-600 md:text-base"
                       required
                     />
 
                     <input
                       name="address"
                       placeholder="Rua"
-                      className="w-full rounded border p-2 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-200 focus:border-orange-600 focus:shadow-lg focus:shadow-orange-200 focus:outline-none active:border-orange-600"
+                      className="w-full rounded border p-2 text-sm transition-all duration-300 ease-in-out hover:shadow-md hover:shadow-orange-200 focus:border-orange-600 focus:shadow-md focus:shadow-orange-200 focus:outline-none active:border-orange-600 md:text-base"
                       required
                     />
 
                     <input
                       name="address"
                       placeholder="Número"
-                      className="w-full rounded border p-2 transition-all duration-300 ease-in-out hover:shadow-lg hover:shadow-orange-200 focus:border-orange-600 focus:shadow-lg focus:shadow-orange-200 focus:outline-none active:border-orange-600"
+                      className="w-full rounded border p-2 text-sm transition-all duration-300 ease-in-out hover:shadow-md hover:shadow-orange-200 focus:border-orange-600 focus:shadow-md focus:shadow-orange-200 focus:outline-none active:border-orange-600 md:text-base"
                       required
                     />
                   </div>
@@ -755,13 +762,13 @@ export default function OrdersManagement() {
                 <button
                   type="button"
                   onClick={() => setIsNewOrderOpen(false)}
-                  className="cursor-pointer rounded bg-gray-200 px-4 py-2 text-gray-700 hover:bg-gray-300"
+                  className="cursor-pointer rounded bg-gray-200 px-3 py-1.5 text-xs text-gray-700 hover:bg-gray-300 md:px-4 md:py-2 md:text-sm"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
-                  className="cursor-pointer rounded bg-orange-600 px-4 py-2 text-white hover:bg-orange-700"
+                  className="cursor-pointer rounded bg-orange-600 px-3 py-1.5 text-xs text-white hover:bg-orange-700 md:px-4 md:py-2 md:text-sm"
                 >
                   Criar Pedido
                 </button>
