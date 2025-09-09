@@ -82,7 +82,7 @@ export function FormLogin() {
                 transition={{ duration: 0.5 }}
                 id="email"
                 type="email"
-                className="w-full rounded border p-2 pl-10 outline-black"
+                className="w-full rounded p-2 pl-10 outline-black"
                 placeholder="Email"
                 animate={{
                   outline: formData.email ? '1px solid black' : 'none',
@@ -116,7 +116,7 @@ export function FormLogin() {
                 animate={{
                   outline: formData.password ? '1px solid black' : 'none',
                 }}
-                className="w-full rounded border p-2 pl-10 outline-black"
+                className="w-full rounded p-2 pl-10 outline-black"
                 value={formData.password}
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })

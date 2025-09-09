@@ -3,7 +3,7 @@
 import type React from 'react'
 
 import { useState } from 'react'
-import { Search, Plus, Edit, Package, X, Gift } from 'lucide-react'
+import { Plus, Edit, Package, X, Gift } from 'lucide-react'
 
 interface InventoryItem {
   id: string

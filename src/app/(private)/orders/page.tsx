@@ -1,18 +1,15 @@
 'use client'
 import { motion } from 'framer-motion'
 import { useState } from 'react'
-import { Input } from '@/components/ui/input'
 import { Checkbox } from '@/components/ui/checkbox'
 import {
   Clock,
   CheckCircle,
   AlertTriangle,
-  Search,
   Filter,
   Eye,
   Plus,
   X,
-  Trash2,
   User,
   Phone,
   MapPin,
@@ -150,8 +147,12 @@ export default function OrdersManagement() {
     'all'
   )
   const [isNewOrderOpen, setIsNewOrderOpen] = useState(false)
+
   const [chickenQuantityModal, setChickenQuantityModal] = useState(false)
   const [chickenQuantity, setChickenQuantity] = useState<number>(0)
+
+  const [ExistingCustomerOrderModal, setExistingCustomerOrderModal] =
+    useState(false)
 
   const [selectedProducts, setSelectedProducts] = useState<
     { name: string; price: number; quantity: number }[]
@@ -276,7 +277,9 @@ export default function OrdersManagement() {
         </div>
         <div className="grid w-full grid-cols-1 gap-2 sm:w-auto sm:grid-cols-3">
           <button
-            onClick={() => setChickenQuantityModal(!chickenQuantityModal)}
+            onClick={() =>
+              setExistingCustomerOrderModal(!ExistingCustomerOrderModal)
+            }
             className="flex cursor-pointer items-center justify-center space-x-2 rounded-md bg-orange-600 px-2 py-2 text-white hover:bg-orange-700 sm:px-2"
           >
             <Plus className="h-4 w-4" />
@@ -785,6 +788,164 @@ export default function OrdersManagement() {
                 </button>
               </div>
             </form>
+          </div>
+        </motion.div>
+      )}
+
+      {ExistingCustomerOrderModal && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40"
+        >
+          <div
+            className="w-11/12 max-w-2xl rounded-lg bg-white p-4 shadow-lg md:p-6"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="mb-3 flex items-center justify-between md:mb-4">
+              <h2 className="text-lg font-bold text-gray-900 md:text-xl">
+                Novo Pedido (Cliente Existente)
+              </h2>
+              <button
+                onClick={() => setExistingCustomerOrderModal(false)}
+                className="cursor-pointer text-gray-600 hover:text-gray-900"
+              >
+                <X className="h-5 w-5 md:h-6 md:w-6" />
+              </button>
+            </div>
+
+            <div className="mb-4">
+              <label className="mb-1 block cursor-pointer text-sm font-semibold text-gray-700">
+                Selecione um cliente:
+              </label>
+              <select
+                className="w-full cursor-pointer rounded border px-3 py-2 text-sm text-gray-700 focus:border-orange-600 focus:ring-2 focus:ring-orange-600"
+                onChange={(e) => {
+                  const client = orders.find(
+                    (orders) => orders.customer === e.target.value
+                  )
+                  if (client) {
+                    setSelectedOrder(client)
+                  }
+                }}
+              >
+                <option value="">Escolher Cliente</option>
+                {orders.map((order) => (
+                  <option key={order.id} value={order.customer}>
+                    {order.customer} ({order.phone})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="mb-4">
+              <DropdownMenu
+                value={''}
+                onValueChange={function (value: string): void {
+                  throw new Error('Function not implemented.')
+                }}
+              >
+                <DropdownMenuTrigger className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-md border border-gray-300 bg-gray-100 px-3 py-2 text-xs text-gray-700 transition-colors hover:bg-gray-200 md:gap-2 md:text-sm">
+                  Adicionar Produtos <Filter className="h-4 w-4" />
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="max-h-60 overflow-y-auto">
+                  {availableProducts.map((product, idx) => (
+                    <DropdownMenuItem
+                      key={idx}
+                      onSelect={() => {
+                        if (
+                          !selectedProducts.find((p) => p.name === product.name)
+                        ) {
+                          setSelectedProducts([
+                            ...selectedProducts,
+                            { ...product, quantity: 1 },
+                          ])
+                        }
+                      }}
+                      className="flex cursor-pointer items-center justify-between text-xs md:text-sm"
+                      value={''}
+                    >
+                      <span>{product.name}</span>
+                      <span>R$ {product.price.toFixed(2)}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+
+            {selectedProducts.length > 0 && (
+              <div className="mb-4">
+                <h3 className="mb-2 text-sm font-semibold text-gray-800">
+                  Produtos selecionados:
+                </h3>
+                <ul className="space-y-1">
+                  {selectedProducts.map((p, idx) => (
+                    <li
+                      key={idx}
+                      className="flex items-center justify-between rounded bg-gray-50 px-2 py-1 text-sm"
+                    >
+                      <span>
+                        {p.quantity}x {p.name}
+                      </span>
+                      <div className="flex items-center gap-2">
+                        <input
+                          type="number"
+                          min={1}
+                          value={p.quantity}
+                          onChange={(e) =>
+                            handleQuantityChange(
+                              idx,
+                              parseInt(e.target.value) || 1
+                            )
+                          }
+                          className="w-12 rounded border text-center"
+                        />
+                        <button
+                          className="cursor-pointer text-red-500 hover:text-red-700"
+                          onClick={() =>
+                            setSelectedProducts(
+                              selectedProducts.filter((_, i) => i !== idx)
+                            )
+                          }
+                        >
+                          <X className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="mt-4 flex justify-end gap-2">
+              <button
+                onClick={() => setExistingCustomerOrderModal(false)}
+                className="cursor-pointer rounded-md bg-gray-200 px-4 py-2 text-sm text-gray-700 hover:bg-gray-300"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={() => {
+                  if (!selectedOrder || selectedProducts.length === 0) {
+                    alert('Selecione um cliente e ao menos 1 produto!')
+                    return
+                  }
+                  createNewOrder({
+                    customer: selectedOrder.customer,
+                    phone: selectedOrder.phone,
+                    items: selectedProducts,
+                    isDelivery: selectedOrder.isDelivery,
+                    address: selectedOrder.address,
+                  })
+                  setExistingCustomerOrderModal(false)
+                  setSelectedProducts([])
+                }}
+                className="cursor-pointer rounded-md bg-orange-600 px-4 py-2 text-sm text-white hover:bg-orange-700"
+              >
+                Confirmar Pedido
+              </button>
+            </div>
           </div>
         </motion.div>
       )}

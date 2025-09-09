@@ -2,7 +2,6 @@
 
 import { Button } from '@/components/ui/button'
 import React from 'react'
-import { motion } from 'framer-motion'
 import { User, UserPlus } from 'lucide-react'
 import { FormLogin } from '@/src/components/FormLogin'
 import { FormRegister } from '@/src/components/FormRegister'
@@ -67,23 +66,13 @@ export default function Login() {
           }}
         /> */}
 
-        <motion.section
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="w-full max-w-md rounded-lg bg-[#FEFEFE] p-4 shadow-lg"
-        >
+        <section className="w-full max-w-md rounded-lg bg-[#FEFEFE] p-4 shadow-lg">
           <div className="">
-            <motion.h1
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5 }}
-              className="font-inter text-center text-3xl font-bold"
-            >
+            <h1 className="font-inter text-center text-3xl font-bold">
               {activeButton === 'login'
                 ? 'Acesse sua conta'
                 : 'Registre sua conta'}
-            </motion.h1>
+            </h1>
             <p className="font-inter text-center font-bold text-[#8490A3]">
               {activeButton === 'register'
                 ? 'Entre com seu email e senha para continuar'
@@ -94,7 +83,7 @@ export default function Login() {
           <div className="bg-[#FEFEFE]">
             {activeButton === 'login' ? <FormLogin /> : <FormRegister />}
           </div>
-        </motion.section>
+        </section>
 
         <section></section>
       </div>

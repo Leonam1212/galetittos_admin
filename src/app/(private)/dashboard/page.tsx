@@ -1,48 +1,6 @@
 'use client'
 
-// export const metadata = {
-//   title: "Dashboard | Minha App",
-//   description: "Painel de controle com visão geral da aplicação.",
-//   keywords: ["dashboard", "painel", "controle"],
-//   openGraph: {
-//     title: "Dashboard | Minha App",
-//     description: "Painel de controle com visão geral da aplicação.",
-//     url: "https://meusite.com/dashboard",
-//     siteName: "Minha App",
-//     images: [
-//       {
-//         url: "https://meusite.com/imagens/dashboard.png",
-//         width: 1200,
-//         height: 630,
-//       },
-//     ],
-//     locale: "pt_BR",
-//     type: "website",
-//   },
-// }
-
-import {
-  ShoppingCart,
-  Users,
-  Package,
-  TrendingUp,
-  Clock,
-  CheckCircle,
-  AlertTriangle,
-  Search,
-  Filter,
-  Check,
-  BanknoteArrowUp,
-} from 'lucide-react'
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu'
-import { Button } from '@/components/ui/button'
+import { ShoppingCart, TrendingUp, Check, BanknoteArrowUp } from 'lucide-react'
 import { useState } from 'react'
 
 type OrderStatus = 'active' | 'pending' | 'finished' | 'cancelled'
@@ -124,57 +82,6 @@ const mockOrders: Order[] = [
 
 export default function DashboardOverview() {
   const [orders, setOrders] = useState<Order[]>(mockOrders)
-  const [searchTerm, setSearchTerm] = useState('')
-  const [statusFilter, setStatusFilter] = useState<string>('all')
-  const [activeTab, setActiveTab] = useState<string>('all')
-
-  const getStatusIcon = (status: OrderStatus) => {
-    switch (status) {
-      case 'active':
-        return <Clock className="h-4 w-4 text-yellow-500" />
-      case 'pending':
-        return <AlertTriangle className="h-4 w-4 text-blue-500" />
-      case 'finished':
-        return <CheckCircle className="h-4 w-4 text-green-500" />
-      case 'cancelled':
-        return <AlertTriangle className="h-4 w-4 text-red-500" />
-    }
-  }
-
-  const getStatusText = (status: OrderStatus) => {
-    switch (status) {
-      case 'active':
-        return 'Ativo'
-      case 'pending':
-        return 'Pendente'
-      case 'finished':
-        return 'Finalizado'
-      case 'cancelled':
-        return 'Cancelado'
-    }
-  }
-
-  const updateOrderStatus = (orderId: string, newStatus: OrderStatus) => {
-    setOrders(
-      orders.map((order) =>
-        order.id === orderId ? { ...order, status: newStatus } : order
-      )
-    )
-  }
-
-  const filteredOrders = orders.filter((order) => {
-    const matchesSearch =
-      order.customer.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      order.id.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesStatus =
-      statusFilter === 'all' || order.status === statusFilter
-    const matchesTab =
-      activeTab === 'all' ||
-      (activeTab === 'active' &&
-        (order.status === 'active' || order.status === 'pending')) ||
-      (activeTab === 'finished' && order.status === 'finished')
-    return matchesSearch && matchesStatus && matchesTab
-  })
 
   const pendingOrders = orders.filter(
     (order) => order.status === 'pending'
@@ -256,10 +163,7 @@ export default function DashboardOverview() {
         </div>
       </div>
 
-      <span className="xl:max-w-8xl relative mx-auto mt-2 h-[.1px] w-full max-w-4xl bg-orange-600">
-        {/* <span className="absolute top-1/2 left-0 h-4 w-[0.1px] -translate-y-1/2 transform rounded-full bg-orange-600"></span>
-        <span className="absolute top-1/2 right-0 h-4 w-[0.1px] -translate-y-1/2 transform rounded-full bg-orange-600"></span> */}
-      </span>
+      <span className="xl:max-w-8xl relative mx-auto mt-2 h-[.1px] w-full max-w-4xl bg-orange-600" />
     </>
   )
 }

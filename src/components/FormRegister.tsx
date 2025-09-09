@@ -76,7 +76,7 @@ export function FormRegister() {
                 transition={{ duration: 0.5 }}
                 id="name"
                 type="name"
-                className="w-full rounded border p-2 pl-10 outline-black"
+                className="w-full rounded p-2 pl-10 outline-black"
                 placeholder="Name"
                 animate={{
                   outline: formData.name ? '1px solid black' : 'none',
@@ -106,7 +106,7 @@ export function FormRegister() {
                 transition={{ duration: 0.5 }}
                 id="email"
                 type="email"
-                className="w-full rounded border p-2 pl-10 outline-black"
+                className="w-full rounded p-2 pl-10 outline-black"
                 placeholder="Email"
                 animate={{
                   outline: formData.email ? '1px solid black' : 'none',
@@ -136,7 +136,7 @@ export function FormRegister() {
                 transition={{ duration: 0.5 }}
                 id="cpf"
                 type="cpf"
-                className="w-full rounded border p-2 pl-10 outline-black"
+                className="w-full rounded p-2 pl-10 outline-black"
                 placeholder="CPF"
                 animate={{
                   outline: formData.cpf ? '1px solid black' : 'none',
@@ -170,7 +170,7 @@ export function FormRegister() {
                 animate={{
                   outline: formData.password ? '1px solid black' : 'none',
                 }}
-                className="w-full rounded border p-2 pl-10 outline-black"
+                className="w-full rounded p-2 pl-10 outline-black"
                 value={formData.password}
                 onChange={(e) =>
                   setFormData({ ...formData, password: e.target.value })
