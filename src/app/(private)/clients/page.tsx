@@ -306,7 +306,7 @@ export default function ClientsManagement() {
                     setIsEditing(true)
                     setEditingClient(client)
                   }}
-                  className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-md bg-blue-600 px-2 py-1.5 text-xs text-white transition-colors hover:bg-blue-700 md:gap-2 md:px-4 md:py-2 md:text-sm"
+                  className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-md bg-orange-400 px-2 py-1.5 text-xs text-white transition-colors hover:bg-orange-700 md:gap-2 md:px-4 md:py-2 md:text-sm"
                 >
                   <Edit className="h-3 w-3 md:h-4 md:w-4" />
                   Editar
@@ -314,7 +314,7 @@ export default function ClientsManagement() {
 
                 <button
                   onClick={() => setClientToDelete(client)}
-                  className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-md bg-red-600 px-2 py-1.5 text-xs text-white transition-colors hover:bg-red-700 md:gap-2 md:px-4 md:py-2 md:text-sm"
+                  className="flex w-full cursor-pointer items-center justify-center gap-1 rounded-md bg-red-800 px-2 py-1.5 text-xs text-white transition-colors hover:bg-red-700 md:gap-2 md:px-4 md:py-2 md:text-sm"
                 >
                   <Trash2 className="h-3 w-3 md:h-4 md:w-4" />
                   Excluir

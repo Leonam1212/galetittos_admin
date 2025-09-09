@@ -121,26 +121,30 @@ export default function InventoryManagement() {
 
   return (
     <div className="space-y-4 p-4 md:p-6 lg:p-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col space-y-4 md:flex md:flex-row md:items-center md:justify-between md:space-y-0">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">
-            Estoque do Domingo
+          <h1 className="text-2xl font-bold text-gray-900 md:text-3xl">
+            <span className="relative text-orange-500">
+              ESTOQUE{' '}
+              <div className="absolute bottom-0 left-0 h-[1px] w-full bg-orange-600"></div>
+            </span>
+            DE DOMINGO
           </h1>
           <p className="text-gray-600">
             Configure quantidades e preços para o dia
           </p>
         </div>
-        <div className="flex space-x-2">
+        <div className="flex flex-col gap-1 space-y-2 md:flex md:flex-row md:gap-4 md:space-y-0">
           <button
             onClick={() => setIsAddDialogOpen(true)}
-            className="inline-flex items-center rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+            className="flex cursor-pointer items-center rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 focus:ring-2 focus:ring-orange-500 focus:outline-none"
           >
             <Plus className="mr-2 h-4 w-4" />
             Novo Produto
           </button>
           <button
             onClick={() => setIsPromoDialogOpen(true)}
-            className="inline-flex items-center rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+            className="flex cursor-pointer items-center rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
           >
             <Gift className="mr-2 h-4 w-4" />
             Criar Promoção
@@ -217,13 +221,13 @@ export default function InventoryManagement() {
       </div>
 
       {isPromoDialogOpen && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="max-h-[90vh] w-full max-w-2xl overflow-y-auto rounded-lg bg-white p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-xl font-semibold">Criar Promoção/Combo</h2>
               <button
                 onClick={() => setIsPromoDialogOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="cursor-pointer text-gray-400 hover:text-gray-600"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -238,13 +242,13 @@ export default function InventoryManagement() {
       )}
 
       {isAddDialogOpen && (
-        <div className="bg-opacity-50 fixed inset-0 z-50 flex items-center justify-center bg-black p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
           <div className="w-full max-w-md rounded-lg bg-white p-6">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-xl font-semibold">Adicionar Novo Produto</h2>
               <button
                 onClick={() => setIsAddDialogOpen(false)}
-                className="text-gray-400 hover:text-gray-600"
+                className="cursor-pointer text-gray-400 hover:text-gray-600"
               >
                 <X className="h-6 w-6" />
               </button>
@@ -376,18 +380,18 @@ function EditableInventoryList({
   }
 
   return (
-    <div className="grid gap-4">
+    <div className="flex flex-col gap-4 p-4">
       {items.map((item) => (
         <div
           key={item.id}
-          className="rounded-lg border bg-white p-6 shadow transition-shadow hover:shadow-md"
+          className="grid w-full grid-cols-1 items-center gap-8 rounded-lg bg-white p-4 shadow md:grid-cols-[1fr_auto]"
         >
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+          <div className="flex flex-col space-y-6 md:flex-row md:items-center md:justify-between md:space-y-0">
+            <div className="align-center flex flex-col justify-center space-y-2 md:flex-row md:items-center md:space-y-0 md:space-x-6">
               <div
-                className={`flex h-12 w-12 items-center justify-center rounded-lg ${
+                className={`flex h-12 w-12 items-center justify-center rounded-lg bg-black md:mr-4 ${
                   item.isCombo ? 'bg-yellow-100' : 'bg-orange-100'
-                }`}
+                } mx-auto my-auto`}
               >
                 {item.isCombo ? (
                   <Gift className="h-6 w-6 text-yellow-600" />
@@ -396,15 +400,17 @@ function EditableInventoryList({
                 )}
               </div>
               <div>
-                <div className="flex items-center space-x-2">
-                  <h3 className="text-lg font-semibold">{item.name}</h3>
+                <div className="flex items-center justify-center space-x-2">
+                  <h3 className="text-center text-lg font-semibold">
+                    {item.name}
+                  </h3>
                   {item.isCombo && (
                     <span className="rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
                       COMBO
                     </span>
                   )}
                 </div>
-                <p className="text-sm text-gray-500">
+                <p className="text-center text-sm text-gray-500">
                   {item.isCombo
                     ? 'Promoção especial - Clique nos valores para editar'
                     : 'Clique nos valores para editar'}
@@ -412,7 +418,7 @@ function EditableInventoryList({
               </div>
             </div>
 
-            <div className="flex items-center space-x-8">
+            <div className="flex flex-col md:flex md:flex-row md:items-center md:space-x-8">
               <div className="text-center">
                 <p className="mb-1 text-sm text-gray-600">Quantidade do Dia</p>
                 <div className="text-2xl font-bold text-gray-900">
@@ -427,7 +433,7 @@ function EditableInventoryList({
 
               <div className="text-center">
                 <p className="mb-1 text-sm text-gray-600">Valor do Dia</p>
-                <div className="text-2xl font-bold text-green-600">
+                <div className="text-2xl font-bold text-orange-400">
                   <EditableField
                     item={item}
                     field="priceForDay"
@@ -440,16 +446,16 @@ function EditableInventoryList({
 
               <div className="text-center">
                 <p className="mb-1 text-sm text-gray-600">Total Estimado</p>
-                <div className="text-xl font-semibold text-purple-600">
+                <div className="text-xl font-semibold text-orange-600">
                   R$ {(item.quantityForDay * item.priceForDay).toFixed(2)}
                 </div>
               </div>
 
               <button
                 onClick={() => onEditItem(item)}
-                className="inline-flex items-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+                className="mx-auto mt-4 flex items-center justify-center rounded-md border border-gray-300 bg-white px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none md:w-12"
               >
-                <Edit className="h-4 w-4" />
+                <Edit className="h-4 w-4 cursor-pointer" />
               </button>
             </div>
           </div>
@@ -551,13 +557,13 @@ function ItemForm({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+          className="cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-orange-500 focus:outline-none"
         >
           Cancelar
         </button>
         <button
           type="submit"
-          className="rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 focus:ring-2 focus:ring-orange-500 focus:outline-none"
+          className="cursor-pointer rounded-md bg-orange-600 px-4 py-2 text-sm font-medium text-white hover:bg-orange-700 focus:ring-2 focus:ring-orange-500 focus:outline-none"
         >
           {item ? 'Salvar' : 'Adicionar'}
         </button>
@@ -725,13 +731,13 @@ function PromoForm({
         <button
           type="button"
           onClick={onClose}
-          className="rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
+          className="cursor-pointer rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 focus:ring-2 focus:ring-yellow-500 focus:outline-none"
         >
           Cancelar
         </button>
         <button
           type="submit"
-          className="rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
+          className="cursor-pointer rounded-md bg-yellow-500 px-4 py-2 text-sm font-medium text-white hover:bg-yellow-600 focus:ring-2 focus:ring-yellow-400 focus:outline-none"
         >
           Criar Combo
         </button>
