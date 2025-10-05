@@ -57,9 +57,7 @@ export namespace $Enums {
     (typeof RESERVATION_STATUS)[keyof typeof RESERVATION_STATUS]
 
   export const ProductType: {
-    GALE01: 'GALE01'
-    TROP02: 'TROP02'
-    BROW03: 'BROW03'
+    GALETO: 'GALETO'
   }
 
   export type ProductType = (typeof ProductType)[keyof typeof ProductType]
@@ -7352,7 +7350,7 @@ export namespace Prisma {
     quantity: number
     price: number
     type: $Enums.ProductType
-    description: string
+    description: string | null
     created_at: Date
     updated_at: Date
     _count: ProductsCountAggregateOutputType | null
@@ -7476,7 +7474,7 @@ export namespace Prisma {
         quantity: number
         price: number
         type: $Enums.ProductType
-        description: string
+        description: string | null
         created_at: Date
         updated_at: Date
       },
@@ -10574,7 +10572,7 @@ export namespace Prisma {
     quantity?: IntFilter<'Products'> | number
     price?: FloatFilter<'Products'> | number
     type?: EnumProductTypeFilter<'Products'> | $Enums.ProductType
-    description?: StringFilter<'Products'> | string
+    description?: StringNullableFilter<'Products'> | string | null
     created_at?: DateTimeFilter<'Products'> | Date | string
     updated_at?: DateTimeFilter<'Products'> | Date | string
     ReservationProducts?: ReservationProductsListRelationFilter
@@ -10586,7 +10584,7 @@ export namespace Prisma {
     quantity?: SortOrder
     price?: SortOrder
     type?: SortOrder
-    description?: SortOrder
+    description?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     ReservationProducts?: ReservationProductsOrderByRelationAggregateInput
@@ -10602,7 +10600,7 @@ export namespace Prisma {
       quantity?: IntFilter<'Products'> | number
       price?: FloatFilter<'Products'> | number
       type?: EnumProductTypeFilter<'Products'> | $Enums.ProductType
-      description?: StringFilter<'Products'> | string
+      description?: StringNullableFilter<'Products'> | string | null
       created_at?: DateTimeFilter<'Products'> | Date | string
       updated_at?: DateTimeFilter<'Products'> | Date | string
       ReservationProducts?: ReservationProductsListRelationFilter
@@ -10616,7 +10614,7 @@ export namespace Prisma {
     quantity?: SortOrder
     price?: SortOrder
     type?: SortOrder
-    description?: SortOrder
+    description?: SortOrderInput | SortOrder
     created_at?: SortOrder
     updated_at?: SortOrder
     _count?: ProductsCountOrderByAggregateInput
@@ -10639,7 +10637,7 @@ export namespace Prisma {
     quantity?: IntWithAggregatesFilter<'Products'> | number
     price?: FloatWithAggregatesFilter<'Products'> | number
     type?: EnumProductTypeWithAggregatesFilter<'Products'> | $Enums.ProductType
-    description?: StringWithAggregatesFilter<'Products'> | string
+    description?: StringNullableWithAggregatesFilter<'Products'> | string | null
     created_at?: DateTimeWithAggregatesFilter<'Products'> | Date | string
     updated_at?: DateTimeWithAggregatesFilter<'Products'> | Date | string
   }
@@ -11077,7 +11075,7 @@ export namespace Prisma {
     quantity: number
     price: number
     type: $Enums.ProductType
-    description: string
+    description?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     ReservationProducts?: ReservationProductsCreateNestedManyWithoutProductInput
@@ -11089,7 +11087,7 @@ export namespace Prisma {
     quantity: number
     price: number
     type: $Enums.ProductType
-    description: string
+    description?: string | null
     created_at?: Date | string
     updated_at?: Date | string
     ReservationProducts?: ReservationProductsUncheckedCreateNestedManyWithoutProductInput
@@ -11101,7 +11099,7 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
-    description?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     ReservationProducts?: ReservationProductsUpdateManyWithoutProductNestedInput
@@ -11113,7 +11111,7 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
-    description?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
     ReservationProducts?: ReservationProductsUncheckedUpdateManyWithoutProductNestedInput
@@ -11125,7 +11123,7 @@ export namespace Prisma {
     quantity: number
     price: number
     type: $Enums.ProductType
-    description: string
+    description?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -11136,7 +11134,7 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
-    description?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -11147,7 +11145,7 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
-    description?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13155,7 +13153,7 @@ export namespace Prisma {
     quantity: number
     price: number
     type: $Enums.ProductType
-    description: string
+    description?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -13166,7 +13164,7 @@ export namespace Prisma {
     quantity: number
     price: number
     type: $Enums.ProductType
-    description: string
+    description?: string | null
     created_at?: Date | string
     updated_at?: Date | string
   }
@@ -13250,7 +13248,7 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
-    description?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -13261,7 +13259,7 @@ export namespace Prisma {
     quantity?: IntFieldUpdateOperationsInput | number
     price?: FloatFieldUpdateOperationsInput | number
     type?: EnumProductTypeFieldUpdateOperationsInput | $Enums.ProductType
-    description?: StringFieldUpdateOperationsInput | string
+    description?: NullableStringFieldUpdateOperationsInput | string | null
     created_at?: DateTimeFieldUpdateOperationsInput | Date | string
     updated_at?: DateTimeFieldUpdateOperationsInput | Date | string
   }

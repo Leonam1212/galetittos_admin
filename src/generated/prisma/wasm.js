@@ -204,9 +204,7 @@ exports.RESERVATION_STATUS = exports.$Enums.RESERVATION_STATUS = {
 }
 
 exports.ProductType = exports.$Enums.ProductType = {
-  GALE01: 'GALE01',
-  TROP02: 'TROP02',
-  BROW03: 'BROW03',
+  GALETO: 'GALETO',
 }
 
 exports.Prisma.ModelName = {

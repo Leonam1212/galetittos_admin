@@ -67,9 +67,7 @@ model Reservations {
 }
 
 enum ProductType {
-  GALE01
-  TROP02
-  BROW03
+  GALETO
 }
 
 model Products {
@@ -78,7 +76,7 @@ model Products {
   quantity            Int
   price               Float
   type                ProductType
-  description         String                @db.VarChar(255)
+  description         String?               @db.VarChar(255)
   created_at          DateTime              @default(now())
   updated_at          DateTime              @default(now())
   ReservationProducts ReservationProducts[]

@@ -2,7 +2,7 @@
 CREATE TYPE "RESERVATION_STATUS" AS ENUM ('PENDING', 'APPROVED', 'REFUSED');
 
 -- CreateEnum
-CREATE TYPE "ProductType" AS ENUM ('GALE01', 'TROP02', 'BROW03');
+CREATE TYPE "ProductType" AS ENUM ('GALETO');
 
 -- CreateTable
 CREATE TABLE "User" (
@@ -68,7 +68,7 @@ CREATE TABLE "Products" (
     "quantity" INTEGER NOT NULL,
     "price" DOUBLE PRECISION NOT NULL,
     "type" "ProductType" NOT NULL,
-    "description" VARCHAR(255) NOT NULL,
+    "description" VARCHAR(255),
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
