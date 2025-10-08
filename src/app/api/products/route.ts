@@ -17,7 +17,7 @@ export const GET = auth(async () => {
   const products = await findAllProductsService()
   return NextResponse.json({ products })
 })
-
+// esse export POST seria para criar um produto
 export const POST = auth(async (req) => {
   const body = await req.json()
   const parsedBody = productsCreateInputSchema.safeParse(body)
