@@ -1,31 +1,53 @@
 import { NextResponse, NextRequest } from 'next/server'
 import { auth } from '@/src/middleware/auth'
-import { Prisma } from '@/src/generated/prisma'
+import { prisma } from '@/src/lib/prisma'
+import { userRepository } from '@/src/lib/repositories/userRepository'
 
-export const GET = auth(async (req: NextRequest) => {
-  //1- aqui eu vou pegar o id do usuario logado
-  //2- após pegar o id, eu vou verificar se ele tem alguma reserva
-  //3- proximo passo é pegar as reservas do usuario usando o id , com o findUnique do Prisma
-  //4- retornar as reservas
-})
+export const GET = async (req: NextRequest) => {
+  try {
+    //nessa luinha, eu to pegando o id do usuario com base na url
+    const userId = req.nextUrl.searchParams.get('id')
+    console.log(userId)
 
-//dentro deste POST eu vou criar uma reserva
-export const POST = auth(async (req: NextRequest) => {
-  //1- aqui procedimento padrão, vou pegar o body da req
-  //2- após pegar o body da req, vou criar uma reserva usando o Prisma
-  //3- verificar se a reserva foi criada
-  //4- retornar a reserva
-})
+    if (!userId) {
+      return NextResponse.json(
+        { error: 'Usuário não autenticado' },
+        { status: 401 }
+      )
+    }
 
-export const DELETE = auth(async (req: NextRequest) => {
-  //1- primeiramente vou pegar o id da reserva
-  //2- proximo passo vou deletar a reserva
-  //3- verificar se a reserva foi deletada
-})
+    const user = await userRepository.findUserById(userId)
 
-export const PATCH = auth(async (req: NextRequest) => {
-  //1- primeiramente vou pegar o id da reserva
-  //2- proximo passo vou atualizar a reserva
-  //3- verificar se a reserva foi atualizada
-  //4- retornar a reserva
-})
+    if (!user) {
+      return NextResponse.json(
+        { error: 'Usuario não encontrado!' },
+        { status: 401 }
+      )
+    }
+
+    const reservations = await prisma.reservations.findMany({
+      where: {
+        user_id: userId,
+      },
+      include: {
+        clients: true,
+        ReservationProducts: {
+          include: {
+            product: true,
+          },
+        },
+      },
+      orderBy: {
+        created_at: 'desc',
+      },
+    })
+
+    return NextResponse.json({ success: true, data: reservations })
+  } catch (err) {
+    console.log('Erro ao buscar reservas:', err)
+    return NextResponse.json(
+      { error: 'Erro ao buscar reservas' },
+      { status: 500 }
+    )
+  }
+}

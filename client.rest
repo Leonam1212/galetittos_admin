@@ -1,14 +1,22 @@
 @baseUrl = http://localhost:3000/api
 @id = 351900e2-b443-41cf-945e-51906be7d96e
 
-# Get Users
+@auth_token = NmQzZDlhZGEtMjg0My00MmIyLWIyNjAtOTQ1MmEwOTcyNWI5Om1pcm9uZ2FAZW1haWwuY29t
+
+###########################################################
+# 👤 USERS
+###########################################################
+
+# 🔹 Get all users
 GET {{baseUrl}}/users
+Accept: application/json
 
 ###
 
-# Post Users
+# 🔹 Create user (Register)
 POST {{baseUrl}}/register
 Content-Type: application/json
+Accept: application/json
 
 {
   "name": "Mironga",
@@ -19,9 +27,19 @@ Content-Type: application/json
 
 ###
 
-# Login	
+# 🔹 Delete user by ID
+DELETE {{baseUrl}}/users?id={{id}}
+Accept: application/json
+
+
+###########################################################
+# 🔐 AUTHENTICATION
+###########################################################
+
+# 🔹 Login
 POST {{baseUrl}}/login
 Content-Type: application/json
+Accept: application/json
 
 {
   "email": "mironga@email.com",
@@ -30,10 +48,30 @@ Content-Type: application/json
 
 ###
 
-# Logout
+# 🔹 Logout
 POST {{baseUrl}}/logout
+Accept: application/json
 
-###
-DELETE {{baseUrl}}/users?id={{id}}
 
-###
+# 🔹 Create reservation
+
+POST {{baseUrl}}/reservations
+Content-Type: application/json
+
+{
+  "user_id": "{{id}}",
+  "client_id": "ID_DO_CLIENTE",
+  "reservation_date": "2025-10-14T10:00:00.000Z",
+  "status": "pending"
+}
+
+
+###########################################################
+# 📅 RESERVATIONS
+###########################################################
+
+# 🔹 Get reservations by user ID (precisa de autenticação)
+GET {{baseUrl}}/reservations
+Accept: application/json
+Cookie: auth_token={{auth_token}}
+
