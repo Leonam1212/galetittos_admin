@@ -3,7 +3,7 @@ import { auth } from '@/src/middleware/auth'
 import { prisma } from '@/src/lib/prisma'
 import { userRepository } from '@/src/lib/repositories/userRepository'
 
-export const GET = async (req: NextRequest) => {
+export const GET = auth(async (req: NextRequest) => {
   try {
     //nessa luinha, eu to pegando o id do usuario com base na url
     const userId = req.nextUrl.searchParams.get('id')
@@ -50,4 +50,4 @@ export const GET = async (req: NextRequest) => {
       { status: 500 }
     )
   }
-}
+})

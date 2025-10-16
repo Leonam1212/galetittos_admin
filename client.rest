@@ -3,16 +3,24 @@
 
 @auth_token = NmQzZDlhZGEtMjg0My00MmIyLWIyNjAtOTQ1MmEwOTcyNWI5Om1pcm9uZ2FAZW1haWwuY29t
 
+
 ###########################################################
 # 👤 USERS
-###########################################################
 
+
+###
+#CLIENTS
+GET {{baseUrl}}/clients
+Content-Type: application/json
+
+
+###########################################################
 # 🔹 Get all users
 GET {{baseUrl}}/users
 Accept: application/json
 
-###
 
+###
 # 🔹 Create user (Register)
 POST {{baseUrl}}/register
 Content-Type: application/json
@@ -25,8 +33,8 @@ Accept: application/json
   "cpf": "123.456.789-00"
 }
 
-###
 
+###
 # 🔹 Delete user by ID
 DELETE {{baseUrl}}/users?id={{id}}
 Accept: application/json
@@ -34,8 +42,9 @@ Accept: application/json
 
 ###########################################################
 # 🔐 AUTHENTICATION
-###########################################################
 
+
+###########################################################
 # 🔹 Login
 POST {{baseUrl}}/login
 Content-Type: application/json
@@ -46,32 +55,42 @@ Accept: application/json
   "password": "123456"
 }
 
-###
 
+###
 # 🔹 Logout
 POST {{baseUrl}}/logout
 Accept: application/json
 
 
-# 🔹 Create reservation
-
-POST {{baseUrl}}/reservations
-Content-Type: application/json
-
-{
-  "user_id": "{{id}}",
-  "client_id": "ID_DO_CLIENTE",
-  "reservation_date": "2025-10-14T10:00:00.000Z",
-  "status": "pending"
-}
-
-
 ###########################################################
 # 📅 RESERVATIONS
+
+
 ###########################################################
 
+
+###
 # 🔹 Get reservations by user ID (precisa de autenticação)
 GET {{baseUrl}}/reservations
 Accept: application/json
 Cookie: auth_token={{auth_token}}
 
+
+### 
+# Create Reservation
+POST {{baseUrl}}/reservations-products
+Content-Type: application/json
+Authorization: Bearer {{auth_token}}
+
+{
+  "user_id": "6d3d9ada-2843-42b2-b260-9452a09725b9",
+  "client_id": "8ace3aa4-5f3a-4a64-bf0d-51103b0d9f23",
+  "reservation_date": "2025-10-14T10:00:00.000Z",
+  "status": "PENDING",
+  "products": [
+    {
+      "id": "bacd098d-ccdc-42d6-9edd-30cc46b9b5ac",
+      "quantity": 2
+    }
+  ]
+}
