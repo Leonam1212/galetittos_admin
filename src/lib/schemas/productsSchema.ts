@@ -2,10 +2,11 @@ import { z } from 'zod'
 
 export const productsCreateInputSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
+  description: z.string().optional(),
   quantity: z.number().min(1, 'Quantidade deve ser pelo menos 1'),
   price: z.number().min(1, 'Preço deve ser pelo menos 1'),
-  description: z.string().optional(),
-  type: z.enum(['GALETO']),
+  type: z.string(),
+  event_date: z.date().optional(),
 })
 
 export const productsUpdateInputSchema = z.object({

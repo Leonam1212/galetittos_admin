@@ -1,12 +1,27 @@
 import { Products } from '../../generated/prisma'
 import { prisma } from '../prisma'
-import {
-  productsCreateInput,
-  productsResponse,
-} from '../schemas/productsSchema'
+import { productsCreateInput } from '../schemas/productsSchema'
 
-const findAllProducts = async (): Promise<Products[]> => {
-  return prisma.products.findMany()
+const findAllProducts = async (
+  page: number,
+  pageSize: number
+): Promise<{
+  products: Products[]
+  totalProducts: number
+}> => {
+  const products = prisma.products.findMany({
+    skip: (page - 1) * pageSize,
+    take: pageSize,
+  })
+
+  const totalProducts = prisma.products.count()
+
+  return Promise.all([products, totalProducts]).then(
+    ([products, totalProducts]) => ({
+      products,
+      totalProducts,
+    })
+  )
 }
 
 const findProductById = async (id: string): Promise<Products | null> => {
@@ -16,7 +31,6 @@ const findProductById = async (id: string): Promise<Products | null> => {
 const createProduct = async (
   product: productsCreateInput
 ): Promise<Products> => {
-  console.log('TO AQUI', product)
   return prisma.products.create({ data: product })
 }
 

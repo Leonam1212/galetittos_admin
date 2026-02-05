@@ -66,17 +66,14 @@ model Reservations {
   ReservationProducts ReservationProducts[]
 }
 
-enum ProductType {
-  GALETO
-}
-
 model Products {
   id                  String                @id @default(uuid())
   name                String
+  description         String?               @db.VarChar(255)
   quantity            Int
   price               Float
-  type                ProductType
-  description         String?               @db.VarChar(255)
+  type                String
+  event_date          DateTime?
   created_at          DateTime              @default(now())
   updated_at          DateTime              @default(now())
   ReservationProducts ReservationProducts[]

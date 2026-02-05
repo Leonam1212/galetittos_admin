@@ -13,9 +13,17 @@ import {
   productsUpdateInputSchema,
 } from '@/src/lib/schemas/productsSchema'
 
-export const GET = auth(async () => {
-  const products = await findAllProductsService()
-  return NextResponse.json({ products })
+export const GET = auth(async (req) => {
+  const page = parseInt(req.nextUrl.searchParams.get('page') ?? '1', 10)
+  const pageSize = parseInt(
+    req.nextUrl.searchParams.get('pageSize') ?? '10',
+    10
+  )
+  const { products, totalProducts } = await findAllProductsService(
+    page,
+    pageSize
+  )
+  return NextResponse.json({ products, totalProducts })
 })
 // esse export POST seria para criar um produto
 export const POST = auth(async (req) => {

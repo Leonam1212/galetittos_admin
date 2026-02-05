@@ -4,7 +4,6 @@ export const userCreateInputSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
   email: z.email('Email inválido'),
   password: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
-  cpf: z.string().optional(),
 })
 
 export const userUpdateInputSchema = z.object({

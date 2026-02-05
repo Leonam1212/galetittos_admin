@@ -276,7 +276,7 @@ function SidebarTrigger({
       }}
       {...props}
     >
-      <div className="hover: flex h-full w-full cursor-pointer items-center justify-center bg-orange-200 transition-all duration-300 ease-in-out hover:bg-orange-400 hover:text-white">
+      <div className="hover: flex h-full w-full cursor-pointer items-center justify-center bg-zinc-200 transition-all duration-300 ease-in-out hover:bg-orange-400 hover:text-white">
         {sidebarOpen ? <ArrowRight /> : <ArrowLeft />}
         <span className="sr-only">Toggle Sidebar</span>
       </div>

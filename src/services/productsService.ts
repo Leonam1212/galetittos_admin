@@ -1,12 +1,18 @@
 import { createError } from '../lib/utils/errorHandler'
 import { productsRepository } from '../lib/repositories/productsRepository'
 
-export const findAllProductsService = () => {
-  return productsRepository.findAllProducts()
-}
-
-export const findProductByIdService = (id: string) => {
-  return productsRepository.findProductById(id)
+export const findAllProductsService = async (
+  page: number,
+  pageSize: number
+) => {
+  const { products, totalProducts } = await productsRepository.findAllProducts(
+    page,
+    pageSize
+  )
+  return {
+    products,
+    totalProducts,
+  }
 }
 
 export const createProductService = async (product: any) => {

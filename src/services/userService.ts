@@ -1,3 +1,4 @@
+import { handleError } from './../lib/utils/errorHandler'
 import bcrypt from 'bcrypt'
 import { userRepository } from '../lib/repositories/userRepository'
 import {
@@ -26,7 +27,9 @@ export const createUserService = async (user: UserCreateInput) => {
   const parsedUser = userCreateInputSchema.safeParse(user)
 
   if (!parsedUser.success) {
-    throw new Error(parsedUser.error.message)
+    return {
+      error: parsedUser.error.message,
+    }
   }
 
   const alreadyExists = await userRepository.findUserByEmail(
@@ -34,7 +37,10 @@ export const createUserService = async (user: UserCreateInput) => {
   )
 
   if (alreadyExists) {
-    throw createError.conflict('Email já cadastrado')
+    return {
+      error: { message: 'Email já cadastrado', status: 409 },
+      user: null,
+    }
   }
 
   const hashedPassword = await bcrypt.hash(parsedUser.data.password, 10)
@@ -43,7 +49,12 @@ export const createUserService = async (user: UserCreateInput) => {
     password: hashedPassword,
   })
 
-  return userRepository.createUser(userToCreate)
+  const response = await userRepository.createUser(userToCreate)
+
+  return {
+    error: null,
+    user: response,
+  }
 }
 
 export const updateUserService = (id: string, user: any) => {

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import { z } from 'zod'
-import { PrismaClient } from '@prisma/client'
 import { Mail, Lock, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import { POST } from '../app/api/login/route'
-import { createUserService } from '../services/userService'
+
 const formSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
   cpf: z.string().optional(),

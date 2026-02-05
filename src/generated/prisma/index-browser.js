@@ -164,10 +164,11 @@ exports.Prisma.ReservationsScalarFieldEnum = {
 exports.Prisma.ProductsScalarFieldEnum = {
   id: 'id',
   name: 'name',
+  description: 'description',
   quantity: 'quantity',
   price: 'price',
   type: 'type',
-  description: 'description',
+  event_date: 'event_date',
   created_at: 'created_at',
   updated_at: 'updated_at',
 }
@@ -201,10 +202,6 @@ exports.RESERVATION_STATUS = exports.$Enums.RESERVATION_STATUS = {
   PENDING: 'PENDING',
   APPROVED: 'APPROVED',
   REFUSED: 'REFUSED',
-}
-
-exports.ProductType = exports.$Enums.ProductType = {
-  GALETO: 'GALETO',
 }
 
 exports.Prisma.ModelName = {
